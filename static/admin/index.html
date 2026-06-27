@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>goanpeca.co — Content Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body>
+    <!-- Self-hosted Sveltia CMS, built from the `feat/cumbre-labs` fork.
+         The Cumbre Labs identity gateway adds a `cumbre-labs` backend that is NOT
+         in the published @sveltia/cms package, so it cannot be loaded from a CDN.
+         This file is built from the fork and copied in:
+           cd <sveltia-cms fork> && node_modules/.bin/vite build
+           cp package/dist/sveltia-cms.js static/admin/sveltia-cms.js
+         Rebuild and recopy whenever the fork is rebased onto upstream. -->
+    <!-- Manual-init mode: lets us merge env-aware overrides on top of
+         config.yml without forking it per environment. When the CMS is loaded
+         from a localhost origin (e.g. http://localhost:4173/admin/ while
+         editing via `local_backend: true`), we swap `site_url` and
+         `display_url` to the current origin so the per-entry "View on site"
+         link (driven by `preview_path` in each collection) opens the LOCAL
+         page instead of jumping to production. In production this no-ops
+         because the hostname check fails. -->
+    <script>
+      window.CMS_MANUAL_INIT = true;
+    </script>
+    <script src="./sveltia-cms.js"></script>
+    <script>
+      // Classic scripts run in document order, so `window.CMS` is registered
+      // by the time this runs. When the CMS is loaded from a localhost origin
+      // (e.g. http://localhost:4173/admin/ while editing locally via the
+      // "Work with Local Repository" button), swap `site_url` and
+      // `display_url` to the current origin so per-entry "View on site" links
+      // (driven by `preview_path` in each collection) open the LOCAL page
+      // instead of jumping to production. No-op outside localhost.
+      var LOCAL_HOSTS = ["localhost", "127.0.0.1", "[::1]"];
+      var isLocal = LOCAL_HOSTS.indexOf(location.hostname) !== -1;
+      var overrides = isLocal ? { site_url: location.origin, display_url: location.origin } : {};
+      // `load_config_file: true` (the default) loads config.yml first, then
+      // deep-merges these overrides on top — so config.yml stays the single
+      // source of truth for collection definitions.
+      window.CMS.init({ config: overrides });
+    </script>
+  </body>
+</html>

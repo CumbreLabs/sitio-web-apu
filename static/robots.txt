@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+# Sitemap URL must match the canonical domain advertised by `<link rel="canonical">`
+# on every page (siteConfig.url) — otherwise crawlers may treat the sitemap as
+# unauthorized for the canonical host.
+Sitemap: https://goanpeca.co/sitemap.xml

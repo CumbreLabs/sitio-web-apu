@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    # Defer PRs for newly-released versions by a few days so post-release
+    # critical-bug patches (or yanked releases) have time to surface before
+    # dependabot opens a PR. Lower bound on adoption-lag, not on freshness:
+    # we still get every release, just on a brief delay.
+    cooldown:
+      default-days: 7
+      semver-major-days: 10
+      semver-minor-days: 7
+      semver-patch-days: 7
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    # github-actions ecosystem only supports `default-days` (the
+    # semver-*-days knobs are npm-only — actions don't always tag strict
+    # semver, so dependabot can't reason about major/minor/patch axes).
+    cooldown:
+      default-days: 7
+    labels:
+      - "dependencies"
+      - "ci"

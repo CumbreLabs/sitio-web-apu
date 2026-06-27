@@ -1,0 +1,9 @@
+{
+  "title": "Sobre Nosotros",
+  "text": "APU Viajes de Montaña es una empresa dedicada a guiar personas en experiencias auténticas de escalada y trekking, con un enfoque en el respeto por la montaña, la seguridad y el crecimiento interior. Nos especializamos en ayudar a escaladores de gimnasio a dar sus primeros pasos en la roca, con rutas cuidadosamente seleccionadas y guías con experiencia y sensibilidad cultural.",
+  "stats": [
+    { "number": "10+", "label": "Años de Experiencia" },
+    { "number": "500+", "label": "Aventuras Guiadas" },
+    { "number": "100%", "label": "Seguridad Garantizada" }
+  ]
+}

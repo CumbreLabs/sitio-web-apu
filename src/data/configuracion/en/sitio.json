@@ -1,0 +1,22 @@
+{
+  "name": "APU Viajes de Montaña",
+  "defaultLanguage": "es",
+  "languages": ["es", "en"],
+  "homePage": "inicio",
+  "url": "https://www.viajesapu.com",
+  "author": "APU Viajes de Montaña",
+  "jobTitle": "Rock climbing and mountaineering in Colombia",
+  "knowsLanguage": ["es", "en"],
+  "themeColor": "#1A4F56",
+  "personImage": "/media/favicon-source.jpg",
+  "favicon": "/media/favicon-source.jpg",
+  "lcpHeroImage": "",
+  "analytics": {
+    "provider": "ga4",
+    "id": "G-QX7QRBG45P"
+  },
+  "timezone": "America/Bogota",
+  "timezoneLabel": "COT",
+  "copyrightNotice": "© {author}. All rights reserved.",
+  "sitemapExtras": []
+}

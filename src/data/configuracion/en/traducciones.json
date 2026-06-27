@@ -1,0 +1,123 @@
+{
+  "sidebar": {
+    "onThisPage": "On this page"
+  },
+  "nav": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "primary": "Primary navigation",
+    "skipToContent": "Skip to content",
+    "book": "Book Now",
+    "switchLanguage": "Switch to Spanish"
+  },
+  "error": {
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "The page you're looking for doesn't exist or has been moved.",
+    "genericTitle": "Something went wrong",
+    "backHome": "Back to home"
+  },
+  "feed": {
+    "description": "Adventures, guided outings and news from APU Viajes de Montaña."
+  },
+  "home": {
+    "viewAll": "View all",
+    "featuredProjectsTitle": "Featured Plans",
+    "recentPostsTitle": "News"
+  },
+  "portfolio": {
+    "all": "All",
+    "backToPortfolio": "Back to portfolio",
+    "albumNotFound": "Album not found",
+    "photoCount_one": "{{count}} photo",
+    "photoCount_other": "{{count}} photos",
+    "filterResultCount_one": "{{count}} album shown",
+    "filterResultCount_other": "{{count}} albums shown",
+    "noResults": "No albums match this filter."
+  },
+  "writing": {
+    "all": "All",
+    "opinion": "Opinion",
+    "report": "Reports",
+    "journal": "Journal Articles",
+    "thesis": "Thesis",
+    "backToWriting": "Back to Writing",
+    "postNotFound": "Post not found",
+    "postNotFoundDesc": "The post you're looking for doesn't exist.",
+    "originallyPublished": "Originally published at",
+    "originallyWrittenIn": "Originally written in",
+    "fallbackToEnglish": "A Spanish version of this post is not yet available — the English original is shown below.",
+    "inLanguage": "in",
+    "languageNames": {
+      "es": "Spanish",
+      "en": "English",
+      "fr": "French",
+      "pt": "Portuguese",
+      "de": "German",
+      "it": "Italian"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "newer": "Newer",
+      "older": "Older",
+      "pageXofY": "Page {{current}} of {{total}}"
+    },
+    "filterResultCount_one": "{{count}} post shown",
+    "filterResultCount_other": "{{count}} posts shown",
+    "noResults": "No posts match this filter."
+  },
+  "projects": {
+    "skillsLabel": "Includes",
+    "all": "All",
+    "oss": "Climbing",
+    "professional": "Trekking",
+    "present": "Present"
+  },
+  "media": {
+    "all": "All",
+    "video": "Video",
+    "interview": "Interview",
+    "podcast": "Podcast",
+    "press": "Press",
+    "conference": "Conference",
+    "meetup": "Meetup",
+    "webinar": "Webinar",
+    "demo": "Demo",
+    "noItems": "No items found"
+  },
+  "about": {
+    "present": "Present",
+    "skillCategories": {
+      "Languages": "Languages",
+      "Frontend": "Frontend",
+      "Backend": "Backend",
+      "AI": "AI",
+      "Data": "Data",
+      "DevOps": "DevOps",
+      "Testing": "Testing",
+      "Databases": "Databases",
+      "Desktop": "Desktop",
+      "Documentation": "Documentation",
+      "Other": "Other"
+    }
+  },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode"
+  },
+  "consent": {
+    "message": "This site uses analytics cookies to understand how visitors use it. Your choice is remembered on this device.",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "footer": {
+    "privacy": "Privacy policy"
+  },
+  "gallery": {
+    "prev": "Previous",
+    "next": "Next",
+    "goToSlide": "Go to slide"
+  },
+  "contact": {
+    "whatsapp": "Contact us on WhatsApp"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Adventure Gallery",
+  "photos": [
+    {
+      "src": "/media/escalada-roca-vertical.jpg",
+      "alt": "Climbers on a vertical rock face during a mountain adventure"
+    },
+    {
+      "src": "/media/tecnicas-escalada-grupo.jpg",
+      "alt": "Group of climbers practicing rock-climbing techniques"
+    },
+    { "src": "/media/vista-panoramica-cima.jpg", "alt": "Panoramic view from the mountain summit" },
+    {
+      "src": "/media/equipo-certificado-uiaa.jpg",
+      "alt": "Professional UIAA-certified climbing gear"
+    },
+    { "src": "/media/expedicion-alta-montana.jpg", "alt": "Guided high-mountain expedition" },
+    { "src": "/media/aventureros-escalada.jpg", "alt": "Group of adventurers enjoying the climb" },
+    { "src": "/media/cumbre-celebracion.jpg", "alt": "Climbers celebrating at the mountain summit" }
+  ]
+}

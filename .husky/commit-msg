@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Husky 9 doesn't need an explicit sourcing of husky.sh anymore — the hook
+# just executes as-is. Validates the commit message against commitlint.config.mjs
+# (Conventional Commits + 72-char subject cap). Bypass with `git commit --no-verify`.
+npx --no -- commitlint --edit "$1"

@@ -1,0 +1,30 @@
+{
+  "title": "Galería de Aventuras",
+  "photos": [
+    {
+      "src": "/media/escalada-roca-vertical.jpg",
+      "alt": "Escaladores en roca vertical durante una aventura en montaña"
+    },
+    {
+      "src": "/media/tecnicas-escalada-grupo.jpg",
+      "alt": "Grupo de escaladores practicando técnicas de escalada en roca"
+    },
+    {
+      "src": "/media/vista-panoramica-cima.jpg",
+      "alt": "Vista panorámica desde la cima de la montaña"
+    },
+    {
+      "src": "/media/equipo-certificado-uiaa.jpg",
+      "alt": "Equipo de escalada profesional y certificado UIAA"
+    },
+    { "src": "/media/expedicion-alta-montana.jpg", "alt": "Expedición guiada en alta montaña" },
+    {
+      "src": "/media/aventureros-escalada.jpg",
+      "alt": "Grupo de aventureros disfrutando de la escalada"
+    },
+    {
+      "src": "/media/cumbre-celebracion.jpg",
+      "alt": "Escaladores celebrando en la cima de la montaña"
+    }
+  ]
+}

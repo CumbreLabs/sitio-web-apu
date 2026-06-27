@@ -14,7 +14,7 @@ Official website for APU Mountain Travel (APU Viajes de Montaña), a Colombian c
 
 ## Project Structure
 
-```
+```text
 apu-website/
 ├── index.html              # Spanish version (main)
 ├── en/

@@ -1,0 +1,36 @@
+{
+  "brand": {
+    "text": "APU Viajes de Montaña",
+    "image": "/media/favicon-source.jpg",
+    "imageDark": "",
+    "imageAlt": "APU Viajes de Montaña",
+    "imageHeight": 32,
+    "showText": false
+  },
+  "items": [
+    {
+      "active": true,
+      "key": "servicios",
+      "label": "Services",
+      "anchor": true
+    },
+    {
+      "active": true,
+      "key": "planes",
+      "label": "Plans",
+      "anchor": true
+    },
+    {
+      "active": true,
+      "key": "galeria",
+      "label": "Gallery",
+      "anchor": true
+    },
+    {
+      "active": true,
+      "key": "contacto",
+      "label": "Contact",
+      "anchor": true
+    }
+  ]
+}

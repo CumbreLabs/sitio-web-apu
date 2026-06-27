@@ -1,0 +1,12 @@
+{
+  "description": "APU Viajes de Montaña ofrece experiencias únicas de escalada en roca y montañismo en Colombia. Cursos, salidas guiadas y aventuras para todos los niveles.",
+  "titleTemplate": "{title} | {name}",
+  "defaultOGImage": "/media/new-logo.png",
+  "defaultBackgroundImage": "",
+  "ogLocales": {
+    "es": "es_CO",
+    "en": "en_US"
+  },
+  "twitterCard": "summary_large_image",
+  "twitterHandle": ""
+}

@@ -1,0 +1,13 @@
+{
+  "title": "APU MOUNTAIN TRAVEL",
+  "subtitle": "Climbing and Trekking in Colombia",
+  "ctaPrimary": {
+    "label": "View Plans",
+    "href": "#planes"
+  },
+  "ctaSecondary": {
+    "label": "Contact",
+    "href": "https://wa.me/573160557537"
+  },
+  "backgroundImage": "/media/hero-escalada-roca.jpg"
+}

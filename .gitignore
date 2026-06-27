@@ -1,61 +1,42 @@
-# Dependencies
-node_modules/
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Build outputs
-dist/
-build/
-out/
-*.min.css
-*.min.js
+node_modules
+dist
+dist-ssr
+.svelte-kit
+*.local
 
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# Environment variables
+# Local env / secrets — never commit OAuth keys, tokens, analytics IDs, etc.
 .env
-.env.local
-.env.production.local
-.env.development.local
-.env.test.local
+.env.*
+!.env.example
 
-# Logs
-logs/
-*.log
-
-# Cache
-.cache/
-.parcel-cache/
-.eslintcache
-.stylelintcache
-
-# Testing
-coverage/
-.nyc_output/
-
-# Temporary files
-*.tmp
-*.temp
-.tmp/
-.temp/
-
-# Playwright MCP
+# Playwright MCP scratch output
 .playwright-mcp/
 
-# Assets folder
-assets/
+# Local design-source working files — brand kit, posters, PDFs, raw photo
+# dumps (250+ MB of originals). These do NOT belong in the web repo; the site
+# serves optimized derivatives from static/media + static/srcset instead.
+# (srcset itself stays tracked.)
+/assets/
 
-# Package manager locks (optional - uncomment if you want to ignore)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+.lighthouseci/
+coverage/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+docs/

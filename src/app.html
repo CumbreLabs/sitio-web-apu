@@ -1,0 +1,145 @@
+<!doctype html>
+<html %sveltekit.html_attributes%>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      Content Security Policy. Allows only the third parties this site actually
+      uses (GTM/GA, YouTube embeds + thumbnails). Fonts are now self-hosted
+      via fontsource, so `font-src` and `style-src` no longer need Google's
+      domains. `'unsafe-inline'` is unavoidable here because:
+        - Svelte's scoped styles inject inline <style> tags.
+        - GTM's bootstrap script + the FOUC/consent shims below are inline.
+      Tightening to nonces would require server-rendered nonces, which an
+      adapter-static SSG cannot do. `frame-ancestors` is omitted because <meta>
+      CSP does not support it (HTTP-header only).
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://img.youtube.com https://cdn.loom.com https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; frame-src 'self' https://www.youtube-nocookie.com https://www.loom.com https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://*.analytics.google.com https://*.g.doubleclick.net; base-uri 'self'; form-action 'self'; object-src 'none'"
+    />
+
+    <!-- Favicons. PNG icons declared first so modern browsers pick a crisp
+         raster for the tab; the multi-size .ico (16+32) is the legacy fallback
+         and the path browsers auto-request at the site root. The `?v=2` query
+         busts Chrome's sticky favicon cache, which otherwise keeps serving the
+         previously-cached (failed/empty) icon even after a hard refresh. Bump
+         the number whenever the icon art changes. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png?v=2" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png?v=2" />
+    <link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png?v=2" />
+    <link rel="manifest" href="/favicon/manifest.json" />
+    <!-- `%theme_color%` is filled in by `hooks.server.ts` from sitio.json#themeColor.
+         A fork's first paint matches its palette without editing this shell. -->
+    <meta name="theme-color" content="%theme_color%" />
+
+    <!-- Open TCP/TLS to third parties we know we'll hit so the handshake doesn't
+         block the first GTM script fetch or YouTube embed load. Fonts are
+         self-hosted via fontsource — no Google Fonts preconnect needed. -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+    <link rel="preconnect" href="https://www.loom.com" />
+
+    <!-- Preload LCP hero image only on home pages — injected by hooks.server.ts. -->
+    %home_lcp_preload%
+
+    <!-- APU is a LIGHT-ONLY site (no dark mode, no theme switcher). We never
+         set `data-theme="dark"`, so the OS prefers-color-scheme is ignored on
+         purpose — the brand renders the same warm-light palette everywhere. -->
+
+    <!-- SPA redirect handler (GitHub Pages) -->
+    <script>
+      (function () {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (!redirect || redirect === location.href) return;
+        try {
+          var url = new URL(redirect, location.origin);
+          if (url.origin !== location.origin) return;
+          history.replaceState(null, "", url.pathname + url.search + url.hash);
+        } catch (_) {}
+      })();
+    </script>
+
+    <!--
+      Google Consent Mode. Defaults to `denied` for GDPR compliance — the
+      CookieBanner component flips analytics_storage to `granted` only after
+      the visitor explicitly accepts. The choice is read from localStorage
+      here so returning visitors who already accepted aren't asked again and
+      analytics fires on the first pageview without waiting for hydration.
+    -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      var savedConsent = null;
+      try {
+        savedConsent = localStorage.getItem("consent");
+      } catch (_) {
+        // Storage disabled (Safari Private Mode) — stay denied.
+      }
+      gtag("consent", "default", {
+        analytics_storage: savedConsent === "granted" ? "granted" : "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+      });
+      // GDPR-friendly default applied BEFORE any analytics tag fires.
+      // Truncates the last IPv4 octet / last 80 bits of IPv6 before storage.
+      // Applies to GA4 loaded directly via gtag.js AND to GA4 fired from
+      // inside a GTM container (gtag('set', …) writes to the same dataLayer
+      // that GTM's tag templates read from). Container-side anonymize_ip
+      // settings still take precedence if you configure them, but this
+      // ensures the default is always on, even on a fork that forgets to
+      // configure the container.
+      gtag("set", "anonymize_ip", true);
+    </script>
+
+    <!--
+      Suppress SvelteKit's "Avoid using history.pushState…" dev-mode warning
+      that fires whenever GTM is on the page. GTM monkey-patches
+      history.pushState/replaceState as soon as it loads (to auto-track SPA
+      navigations). That happens AFTER SvelteKit has already installed its own
+      wrapper, producing a double-wrap chain: SvelteKit's navigate() calls
+      pushState → GTM's wrap delegates back to "original" → which is now
+      SvelteKit's wrap, which sees a non-SvelteKit caller and warns. The
+      navigation itself works fine; the warning is purely informational and
+      production-suppressed. Filter is narrow (both substrings required) so
+      genuine warnings about user-written history.* calls still surface.
+    -->
+    <script>
+      (function () {
+        var origWarn = console.warn;
+        console.warn = function () {
+          var msg = arguments[0];
+          if (
+            typeof msg === "string" &&
+            msg.indexOf("history.pushState") !== -1 &&
+            msg.indexOf("SvelteKit's router") !== -1
+          ) {
+            return;
+          }
+          return origWarn.apply(this, arguments);
+        };
+      })();
+    </script>
+
+    <!--
+      Analytics. `%analytics_head%` and `%analytics_body%` are filled in by
+      `hooks.server.ts` based on `sitio.json#analytics.provider`:
+        - "gtm"  → GTM lazy bootstrap (head) + GTM <noscript> iframe (body)
+        - "ga4"  → GA4 gtag.js lazy bootstrap (head) + nothing (body)
+        - "none" → both empty
+      All analytics is gated by the consent-mode defaults above; nothing fires
+      until the cookie banner is accepted.
+    -->
+    %analytics_head% %sveltekit.head%
+  </head>
+  <body>
+    %analytics_body%
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
+</html>

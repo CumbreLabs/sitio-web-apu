@@ -1,0 +1,14 @@
+{
+  "entryPoints": ["src/lib/**/*.ts"],
+  "entryPointStrategy": "expand",
+  "out": "dist/api",
+  "exclude": ["**/*.svelte", "**/*.svelte.ts", "**/+*.ts", "**/*.test.ts"],
+  "tsconfig": "./tsconfig.json",
+  "skipErrorChecking": true,
+  "navigationLinks": {
+    "← back to site": "/"
+  },
+  "hideGenerator": false,
+  "categorizeByGroup": true,
+  "name": "goanpeca.co — API reference"
+}

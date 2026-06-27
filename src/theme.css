@@ -1,0 +1,117 @@
+/*
+ * THEME — the only file a fork should need to touch to re-skin the site.
+ *
+ * APU Viajes de Montaña palette. Ported from the original static site's
+ * styles.css brand tokens (dark-teal #1A4F56, bright-teal #00B2A0,
+ * orange #E8A562, navbar/near-black teal #091C1E). APU is a light-first
+ * site: warm off-white background, near-white card surfaces, deep teal text.
+ *
+ * Everything in `app.css` reads from these tokens via `var(--…)` so swapping
+ * a palette / font / radius set takes ~30 seconds. Components don't carry
+ * hex literals; they use Tailwind utility classes that resolve to these
+ * `@theme` tokens (Tailwind v4's CSS-first config).
+ *
+ * Naming convention:
+ *   --color-<role>            → light mode
+ *   --color-<role>-dark       → dark mode (variant `dark` is defined in
+ *                                app.css and selects `[data-theme="dark"]`)
+ *   --font-<role>             → typeface stacks
+ *   --radius-<size>           → corner radii
+ *   --shadow-<size>           → shadow tokens
+ *
+ * Contrast: every `--color-text` / `--color-muted` / `--color-accent` pair
+ * clears WCAG AA against the `--color-bg` AND `--color-surface` of the same
+ * mode (verified: light text/accent 8.6:1+, muted 6.4:1+; dark text 12:1+,
+ * muted 6.6:1+, accent 7.3:1+). Don't lighten without re-checking contrast.
+ */
+
+@theme {
+  /* ---------------------------------------------------------------------
+     TYPEFACES
+     APU ships two self-hosted faces (see @font-face blocks in app.css):
+       - Outfit          → body / UI / nav (the sans token)
+       - AirConditioner  → display / headings (occupies the serif token slot;
+         APU has no serif face, so the brand display font fills it and every
+         `font-serif` heading utility resolves to AirConditioner)
+     Fallback metrics for these stacks live in app.css's @font-face blocks.
+  --------------------------------------------------------------------- */
+  --font-sans:
+    "Outfit", "Outfit Fallback", ui-sans-serif, system-ui, "Segoe UI", Tahoma, sans-serif;
+  --font-serif:
+    "AirConditioner", "Outfit", "AirConditioner Fallback", ui-sans-serif, system-ui, sans-serif;
+  /* Monospace face for inline `<code>` and `<pre><code>` blocks. */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---------------------------------------------------------------------
+     LIGHT-MODE PALETTE — APU (warm off-white + deep teal, orange accent)
+     The original site is light-first. Body text + primary accent both use the
+     brand dark-teal #1A4F56 (also the site themeColor). `muted` is a
+     desaturated teal that still clears AA against bg and surface.
+  --------------------------------------------------------------------- */
+  --color-bg: #f9f9f9; /* original --light-bg */
+  --color-text: #1a4f56; /* original --dark-teal */
+  --color-muted: #3d6168; /* desaturated teal, AA on bg + surface */
+  --color-border: #d9e3e2; /* soft teal-tinted hairline */
+  --color-accent: #1a4f56; /* brand dark-teal */
+  --color-surface: #ffffff; /* white cards / alt sections */
+
+  /* ---------------------------------------------------------------------
+     DARK-MODE PALETTE
+     Built on the original near-black teal navbar (#091C1E) so the dark theme
+     still reads as "APU teal at night." Accent shifts to a lighter
+     bright-teal (descended from --teal #00B2A0) for contrast on the dark bg.
+  --------------------------------------------------------------------- */
+  --color-bg-dark: #091c1e; /* original --navbar-bg */
+  --color-text-dark: #e6efed;
+  --color-muted-dark: #9fb6b3;
+  --color-border-dark: #1f3b3c;
+  --color-accent-dark: #3fd0c0; /* lightened bright-teal */
+  --color-surface-dark: #11302f;
+
+  /* ---------------------------------------------------------------------
+     SECONDARY BRAND ACCENTS
+     The original used a light sandy orange (#E8A562) for CTAs, the h2 underline,
+     badges, and link hovers. That hue fails WCAG AA contrast against white in
+     BOTH directions (white text on orange buttons AND orange price text on
+     white, ~2.1:1). The token is darkened to a deeper amber that clears AA
+     (≈4.9:1 vs white, so white-on-orange and orange-on-white both pass) while
+     keeping the warm-orange identity. bright-teal (#00B2A0) stays for card
+     top-borders / stats. Exposed as tokens so components opt in via
+     `text-brand-orange` / `bg-brand-orange` / `border-brand-teal`, no hex
+     literals. (Contrast verified by `npm run audit:a11y`.)
+  --------------------------------------------------------------------- */
+  --color-brand-orange: #a85f08;
+  --color-brand-orange-dark: #efb87f;
+  /* Warm cream panel behind the TREPA discount callout (matches the original
+     --discount-box background). Exposed so the Services section uses
+     `bg-brand-cream` rather than a hex literal. */
+  --color-brand-cream: #fff3e0;
+  /* WhatsApp brand green for the floating contact button (original .float-wa).
+     Exposed so the FAB uses `bg-whatsapp` rather than a hex literal. */
+  --color-whatsapp: #25d366;
+  --color-brand-teal: #00b2a0; /* original --teal */
+  --color-brand-teal-dark: #3fd0c0;
+  /* Fixed dark-teal header/footer chrome — the navbar is ALWAYS this color
+     (the original --navbar-bg), independent of the light page palette. Exposed
+     as a token so the Navbar uses `bg-navbar` rather than a hex literal. */
+  --color-navbar: #091c1e;
+
+  /* ---------------------------------------------------------------------
+     RADII + SHADOWS
+     The original APU used generously rounded cards (15px), pill buttons, and
+     soft drop shadows. Radii bumped above the template defaults to match that
+     feel; cards lift on hover via the card shadow.
+  --------------------------------------------------------------------- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 5px 20px rgb(26 79 86 / 0.1);
+  --shadow-card-dark: 0 6px 24px rgb(0 0 0 / 0.45);
+}
+
+/* ---------------------------------------------------------------------
+   CODE-HIGHLIGHT THEME (Shiki)
+   APU is a single-page marketing site with no code blocks, but the token
+   plumbing is left intact so the template's prose styles still resolve.
+   The `<pre>` container picks up `--radius-md` + `--font-mono` from above.
+--------------------------------------------------------------------- */

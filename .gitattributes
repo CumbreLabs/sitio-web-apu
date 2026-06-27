@@ -1,0 +1,15 @@
+# Enforce LF line endings in the repo (all platforms)
+* text=auto eol=lf
+
+# Explicitly mark binary files
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
