@@ -66,7 +66,7 @@
     "lucide-svelte": "^1.0.1",
     "marked": "^18.0.5",
     "marked-gfm-heading-id": "^4.1.4",
-    "shiki": "^4.1.0"
+    "shiki": "^4.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
