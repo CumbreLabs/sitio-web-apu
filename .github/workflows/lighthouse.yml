@@ -52,7 +52,7 @@ jobs:
     # regen + build + artifact upload; ~4-5 min typical. 10 min covers slow runners.
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -98,7 +98,7 @@ jobs:
         type: [core, writing]
     name: Lighthouse (${{ matrix.type }}-${{ matrix.lang }})
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -177,7 +177,7 @@ jobs:
       # `src/data/configuracion/es/sitio.json` for the timezone, URL, and
       # short-label fields. Without this step the file isn't on disk
       # (the summarize job otherwise only downloads link artifacts).
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
