@@ -1,0 +1,718 @@
+# =============================================================================
+# Configuracion de Sveltia CMS para APU Viajes de Montaña (viajesapu.com)
+# =============================================================================
+# Sitio de una sola pagina, bilingue (ES por defecto + EN). No tiene blog,
+# portafolio ni paginas internas — solo las secciones del home: hero,
+# sobre-nosotros, servicios, galeria y contacto, mas la configuracion del
+# sitio. Los nombres de campo reflejan EXACTAMENTE los JSON en
+# src/data/colecciones/ y src/data/configuracion/.
+
+backend:
+  name: cumbre-labs
+  repo: CumbreLabs/sitio-web-apu
+  branch: main
+  base_url: https://cumbre-labs-cms-oauth.goanpeca.workers.dev
+  auth_endpoint: gateway/auth
+  api_root: https://cumbre-labs-cms-oauth.goanpeca.workers.dev/gh
+  graphql_api_root: https://cumbre-labs-cms-oauth.goanpeca.workers.dev/gh/graphql
+  auth_methods: [oauth]
+
+logo_url: /media/new-logo.png
+
+i18n:
+  structure: multiple_folders
+  locales: [es, en]
+  default_locale: es
+
+media_folder: static/media
+public_folder: /media
+
+site_url: https://www.viajesapu.com
+display_url: https://www.viajesapu.com
+
+output:
+  json:
+    indent_style: space
+    indent_size: 2
+
+collections:
+  # ---------------------------------------------------------------------------
+  # SECCIONES DEL HOME (archivos i18n por seccion)
+  # ---------------------------------------------------------------------------
+  # El home renderiza estas secciones EN ORDEN: hero, sobre-nosotros,
+  # servicios, galeria, contacto. Cada una es un archivo JSON por idioma.
+  - name: colecciones
+    label: Secciones del Inicio
+    icon: dashboard
+    description: Portada (hero), Sobre nosotros, Servicios y planes, Galeria y Contacto.
+    i18n: true
+    files:
+      # --- Hero / Portada ---
+      - name: hero
+        label: Portada (Hero)
+        file: src/data/colecciones/{{locale}}/hero.json
+        i18n: true
+        fields:
+          - { name: title, label: Titulo principal, widget: string, i18n: true }
+          - { name: subtitle, label: Subtitulo, widget: text, required: false, i18n: true }
+          - name: ctaPrimary
+            label: Boton principal
+            widget: object
+            i18n: true
+            collapsed: true
+            hint: "Boton de llamada a la accion mas destacado de la portada."
+            fields:
+              - { name: label, label: Texto del boton, widget: string, required: false, i18n: true }
+              - { name: href, label: "Enlace (ancla #seccion, URL, o wa.me / mailto:)", widget: string, required: false, pattern: ["^(https?://|mailto:|tel:|#|/).+", "Ancla #seccion, ruta relativa, o URL https://, mailto:, tel:"], i18n: duplicate }
+          - name: ctaSecondary
+            label: Boton secundario
+            widget: object
+            i18n: true
+            collapsed: true
+            hint: "Boton de accion secundario (opcional)."
+            fields:
+              - { name: label, label: Texto del boton, widget: string, required: false, i18n: true }
+              - { name: href, label: "Enlace (ancla #seccion, URL, o wa.me / mailto:)", widget: string, required: false, pattern: ["^(https?://|mailto:|tel:|#|/).+", "Ancla #seccion, ruta relativa, o URL https://, mailto:, tel:"], i18n: duplicate }
+          - name: backgroundImage
+            label: Imagen de fondo
+            widget: image
+            required: false
+            accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif"
+            media_folder: "/static/media"
+            public_folder: "/media"
+            i18n: duplicate
+            hint: "Imagen de fondo a pantalla completa de la portada."
+
+      # --- Sobre nosotros ---
+      - name: sobre-nosotros
+        label: Sobre Nosotros
+        file: src/data/colecciones/{{locale}}/sobre-nosotros.json
+        i18n: true
+        fields:
+          - { name: title, label: Titulo de seccion, widget: string, i18n: true }
+          - { name: text, label: Texto, widget: text, i18n: true }
+          - name: stats
+            label: Cifras / Estadisticas
+            widget: list
+            required: false
+            i18n: true
+            hint: "Numeros destacados (ej. años de experiencia, aventuras). Se muestran como contadores."
+            fields:
+              - { name: number, label: Numero, widget: string, i18n: duplicate, hint: 'ej. "10+", "500+", "100%"' }
+              - { name: label, label: Etiqueta, widget: string, i18n: true }
+
+      # --- Servicios y planes ---
+      - name: servicios
+        label: Servicios y Planes
+        file: src/data/colecciones/{{locale}}/servicios.json
+        i18n: true
+        fields:
+          - { name: title, label: Titulo de seccion, widget: string, i18n: true }
+          - name: featured
+            label: Servicio destacado
+            widget: object
+            i18n: true
+            collapsed: true
+            hint: "Servicio principal mostrado de forma prominente (la tarjeta grande)."
+            fields:
+              - { name: emoji, label: Emoji / icono, widget: string, required: false, i18n: duplicate }
+              - { name: title, label: Titulo, widget: string, required: false, i18n: true }
+              - { name: subtitle, label: Subtitulo, widget: string, required: false, i18n: true }
+              - { name: description, label: Descripcion, widget: text, required: false, i18n: true }
+              - { name: badge, label: Etiqueta / badge, widget: string, required: false, i18n: true }
+              - { name: price, label: Precio, widget: string, required: false, i18n: duplicate, hint: 'Mantener tal cual (ej. "$1.650.000"). No se traduce.' }
+              - { name: perks, label: Beneficios incluidos, widget: text, required: false, i18n: true }
+          - { name: plansTitle, label: Titulo del bloque de planes, widget: string, required: false, i18n: true }
+          - name: plans
+            label: Planes
+            widget: list
+            required: false
+            i18n: true
+            hint: "Cada plan / paquete que ofrece APU."
+            fields:
+              - { name: title, label: Titulo del plan, widget: string, i18n: true }
+              - { name: subtitle, label: Subtitulo, widget: string, required: false, i18n: true }
+              - name: items
+                label: Detalles (uno por linea)
+                widget: list
+                required: false
+                i18n: true
+                field: { name: item, label: Item, widget: string }
+              - { name: price, label: Precio, widget: string, required: false, i18n: duplicate, hint: 'Mantener tal cual (ej. "$140.000", "Desde $1.450.000", o vacio). No se traduce.' }
+          - name: discount
+            label: Descuento / Promocion
+            widget: object
+            required: false
+            i18n: true
+            collapsed: true
+            hint: "Banner o nota de descuento (opcional)."
+            fields:
+              - { name: title, label: Titulo, widget: string, required: false, i18n: true }
+              - { name: linkLabel, label: Texto del enlace, widget: string, required: false, i18n: true }
+              - { name: linkHref, label: URL del enlace, widget: string, required: false, pattern: ["^(https?://|mailto:|tel:|#|/).+", "URL https://, mailto:, tel:, ancla #seccion o ruta relativa"], i18n: duplicate }
+              - { name: body, label: Texto, widget: text, required: false, i18n: true }
+
+      # --- Galeria ---
+      - name: galeria
+        label: Galeria
+        file: src/data/colecciones/{{locale}}/galeria.json
+        i18n: true
+        fields:
+          - { name: title, label: Titulo de seccion, widget: string, i18n: true }
+          - name: photos
+            label: Fotos
+            widget: list
+            i18n: duplicate
+            hint: "Fotos de la galeria. La imagen se comparte entre idiomas; el texto alternativo es por idioma."
+            fields:
+              - { name: src, label: Foto, widget: image, accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif", media_folder: "/static/media", public_folder: "/media", i18n: duplicate }
+              - { name: alt, label: Texto alternativo, widget: string, required: false, i18n: true }
+
+      # --- Contacto ---
+      - name: contacto
+        label: Contacto
+        file: src/data/colecciones/{{locale}}/contacto.json
+        i18n: true
+        fields:
+          - { name: title, label: Titulo de seccion, widget: string, i18n: true }
+          - { name: subtitle, label: Subtitulo, widget: text, required: false, i18n: true }
+          - { name: email, label: Email, widget: string, required: false, pattern: ["^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "Debe ser un email válido"], i18n: duplicate }
+          - { name: phone, label: Teléfono / WhatsApp, widget: string, required: false, pattern: ["^\\+?[0-9 ()-]{6,}$", "Solo números, espacios, +, ( ) y guiones"], i18n: duplicate }
+
+  # ---------------------------------------------------------------------------
+  # CONFIGURACION DEL SITIO
+  # ---------------------------------------------------------------------------
+  - name: site
+    label: Configuracion
+    icon: settings
+    description: Titulo, descripcion, metadatos OG/Twitter, redes sociales, navegacion, traducciones e IDs de analitica.
+    i18n: true
+    files:
+      # --- General / Identidad del sitio ---
+      - name: sitio
+        label: General
+        file: src/data/configuracion/{{locale}}/sitio.json
+        i18n: true
+        fields:
+          - { name: name, label: Nombre del sitio (pestana del navegador + OG), widget: string, i18n: duplicate }
+          - name: author
+            label: Autor (meta name="author")
+            widget: string
+            i18n: duplicate
+            pattern: ["^[\\s\\S]{2,100}$", "Entre 2 y 100 caracteres"]
+            hint: "Aparece en <meta name=\"author\"> en todas las páginas."
+          - name: jobTitle
+            label: Cargo / Actividad (JSON-LD Person.jobTitle)
+            widget: string
+            required: false
+            i18n: true
+            pattern: ["^[\\s\\S]{0,200}$", "Máximo 200 caracteres"]
+            hint: "Actividad principal. Aparece en el grafo JSON-LD (Google Knowledge Panel). Cada idioma tiene su propia versión."
+          - name: knowsLanguage
+            label: Códigos ISO para JSON-LD (Person.knowsLanguage)
+            widget: list
+            required: false
+            i18n: duplicate
+            field: { name: code, label: Código de idioma, widget: string, pattern: ["^[a-z]{2,3}(-[A-Z]{2})?$", "Código ISO 639-1 (ej. es, en, fr)"] }
+            hint: "Códigos ISO 639-1 (ej. es, en) para el JSON-LD Person.knowsLanguage."
+          - name: defaultLanguage
+            label: Idioma por defecto
+            widget: select
+            i18n: duplicate
+            default: "es"
+            options:
+              - { label: "Español", value: "es" }
+              - { label: "English", value: "en" }
+          - name: languages
+            label: Idiomas soportados (códigos ISO 639-1)
+            widget: list
+            i18n: duplicate
+            default: ["es", "en"]
+            field: { name: code, label: Código de idioma, widget: string, pattern: ["^[a-z]{2,3}(-[A-Z]{2})?$", "Código ISO 639-1 (ej. es, en, fr, pt-BR)"] }
+            hint: "Lista de códigos de idioma que el sitio soporta. Debe incluir el idioma por defecto."
+          - name: homePage
+            label: Identificador de la página de inicio
+            widget: string
+            i18n: duplicate
+            default: "inicio"
+            pattern: ["^[a-z0-9-]+$", "Solo letras minusculas, numeros y guiones"]
+            hint: "Identificador de la página de inicio. APU es de una sola página: dejar 'inicio'."
+          - name: url
+            label: URL canonica del sitio
+            widget: string
+            i18n: duplicate
+            pattern: ["^https?://.*[^/]$", "Debe comenzar con http(s):// y NO terminar con /"]
+          - name: themeColor
+            label: Color de tema (meta theme-color)
+            widget: string
+            i18n: duplicate
+            default: "#1A4F56"
+            pattern: ["^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$", "Color en formato hexadecimal (ej. #1A4F56 o #fff)"]
+            hint: "Color hex que el navegador usa para la barra de direcciones móvil. Hacer coincidir con --color-bg en src/theme.css."
+          - name: personImage
+            label: Foto / logo (JSON-LD Person.image)
+            widget: image
+            accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif"
+            i18n: duplicate
+            required: false
+            media_folder: /static/media
+            public_folder: /media
+            hint: "Imagen para el grafo JSON-LD (Google Knowledge Panel). Si está vacío se usa el favicon."
+          - name: favicon
+            label: Favicon
+            widget: image
+            accept: "image/webp,image/png,image/svg+xml,image/jpeg"
+            i18n: duplicate
+            required: false
+            media_folder: /static/media
+            public_folder: /media
+            hint: "Imagen origen única para generate-favicons.mjs — produce todas las variantes + favicon.ico + manifest.json."
+          - name: lcpHeroImage
+            label: Imagen LCP (preload en página de inicio)
+            widget: image
+            accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif"
+            i18n: duplicate
+            required: false
+            media_folder: /static/media
+            public_folder: /media
+            hint: "Imagen que se precarga en la página de inicio para mejorar el LCP. Si está vacío se usa la imagen OG por defecto (de seo.json)."
+          - name: analytics
+            label: Analítica (proveedor + ID)
+            widget: object
+            i18n: duplicate
+            hint: "Selecciona el proveedor de analítica del sitio. 'ga4' = inyección directa de gtag.js. 'gtm' = container de Google Tag Manager. 'none' = sin analítica."
+            fields:
+              - name: provider
+                label: Proveedor
+                widget: select
+                default: "ga4"
+                options:
+                  - { label: "Ninguno", value: "none" }
+                  - { label: "Google Tag Manager (carga GA4 desde GTM)", value: "gtm" }
+                  - { label: "Google Analytics 4 (directo, sin GTM)", value: "ga4" }
+              - name: id
+                label: ID del proveedor
+                widget: string
+                required: false
+                pattern: ["^(GTM-[A-Z0-9]+|G-[A-Z0-9]+|)$", "Debe ser GTM-XXXXXXX, G-XXXXXXXXXX, o vacío"]
+                hint: "Para GTM: GTM-XXXXXXX. Para GA4: G-XXXXXXXXXX. Si provider=none, deja vacío."
+          - name: timezone
+            label: Zona horaria del sitio (IANA)
+            widget: string
+            i18n: duplicate
+            default: "America/Bogota"
+            pattern: ["^[A-Za-z_]+/[A-Za-z_]+(/[A-Za-z_]+)?$", "Identificador IANA (ej. 'America/Bogota', 'Europe/Madrid', 'UTC')"]
+            hint: "Identificador de zona horaria IANA del propietario del sitio."
+          - name: timezoneLabel
+            label: Etiqueta corta de la zona horaria
+            widget: string
+            i18n: duplicate
+            default: "COT"
+            pattern: ["^[A-Z]{2,5}$", "2-5 letras mayúsculas (ej. COT, EST, CET, GMT, UTC)"]
+            hint: "Abreviatura mostrada junto al timestamp (ej. 'COT' para Colombia)."
+          - name: copyrightNotice
+            label: Plantilla del aviso de copyright (EXIF)
+            widget: string
+            required: false
+            i18n: duplicate
+            default: "© {author}. Todos los derechos reservados."
+            hint: "Aviso embebido en EXIF/XMP de las fotos. Placeholders: {author} y {year}."
+          - name: sitemapExtras
+            label: URLs extra para el sitemap (PDFs, recursos descargables)
+            widget: list
+            required: false
+            i18n: duplicate
+            field: { name: url, label: URL o ruta, widget: string, pattern: ["^(https?://|/).+$", "URL absoluta (https://…) o ruta del sitio (/media/…)"] }
+            hint: "URLs adicionales que aparecen en sitemap.xml."
+
+      # --- SEO y tarjetas sociales ---
+      - name: seo
+        label: SEO y tarjetas sociales
+        file: src/data/configuracion/{{locale}}/seo.json
+        i18n: true
+        fields:
+          - name: description
+            label: Descripción del sitio (meta description + OG)
+            widget: text
+            i18n: true
+            pattern: ["^[\\s\\S]{100,200}$", "Entre 100 y 200 caracteres (recomendado 150-160 para SEO). LinkedIn marca descripciones <100 chars como advertencia."]
+            hint: "Cada idioma tiene su propia versión. Se usa como meta description y como fallback de OG. 150-160 caracteres recomendado (mínimo 100, máximo 200)."
+          - name: titleTemplate
+            label: Plantilla del título de página
+            widget: string
+            required: false
+            i18n: duplicate
+            default: "{title} | {name}"
+            pattern: ["^.*\\{title\\}.*\\{name\\}.*$|^.*\\{name\\}.*\\{title\\}.*$|^$", "Debe incluir {title} y {name}, o estar vacío"]
+            hint: "Formato del <title> de cada página. Soporta los marcadores {title} y {name}. Vacío → '{title} | {name}'."
+          - name: defaultOGImage
+            label: Imagen OG por defecto (fallback para paginas sin ogImage)
+            widget: image
+            accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif"
+            i18n: duplicate
+            required: false
+            media_folder: /static/media
+            public_folder: /media
+            hint: "Imagen OG que se usa cuando una página no especifica la suya."
+          - name: defaultBackgroundImage
+            label: Imagen de fondo por defecto (Hero de listings)
+            widget: image
+            accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif"
+            i18n: duplicate
+            required: false
+            media_folder: /static/media
+            public_folder: /media
+            hint: "Imagen de fondo del componente Hero cuando una página no especifica su propio backgroundImage."
+          - name: ogLocales
+            label: Códigos OG por idioma
+            widget: object
+            i18n: duplicate
+            required: false
+            fields:
+              - { name: es, label: "es → OG locale (ej. es_CO, es_MX, es_ES)", widget: string, required: false, default: "es_CO" }
+              - { name: en, label: "en → OG locale (ej. en_US, en_GB, en_CA)", widget: string, required: false, default: "en_US" }
+            hint: "Códigos de localización OG por idioma. Ejemplos: es_CO, en_US."
+          - name: twitterCard
+            label: Estilo de tarjeta de Twitter/X
+            widget: select
+            i18n: duplicate
+            options: ["summary", "summary_large_image"]
+            default: "summary_large_image"
+          - name: twitterHandle
+            label: Cuenta de Twitter/X (con @)
+            widget: string
+            required: false
+            i18n: duplicate
+            pattern: ["^(@[A-Za-z0-9_]{1,15})?$", "Debe comenzar con @ y tener máximo 15 caracteres alfanuméricos, o estar vacío"]
+            hint: "Opcional. Si el sitio no tiene cuenta de Twitter/X, deja vacío y los meta tags de Twitter se omiten."
+
+      # --- Encabezado y menu principal ---
+      - name: navegacion
+        label: Encabezado y menú principal
+        file: src/data/configuracion/{{locale}}/navegacion.json
+        i18n: true
+        fields:
+          - name: brand
+            label: Marca (logo + texto)
+            widget: object
+            collapsed: true
+            i18n: true
+            hint: "Lo que aparece arriba a la izquierda del navbar."
+            fields:
+              - name: text
+                label: Texto de marca
+                widget: string
+                required: false
+                i18n: true
+                pattern: ["^[\\s\\S]{0,60}$", "Máximo 60 caracteres (los navbars largos rompen el layout móvil)"]
+                hint: "Texto que aparece como wordmark. Vacío = usa el nombre del sitio (sitio.json#name)."
+              - name: image
+                label: Logo (claro)
+                widget: image
+                required: false
+                accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif"
+                media_folder: "/static/media"
+                public_folder: "/media"
+                i18n: duplicate
+                hint: "Logo del navbar. Vacío = sin imagen (sólo texto)."
+              - name: imageDark
+                label: Logo (oscuro, opcional)
+                widget: image
+                required: false
+                accept: "image/webp,image/jpeg,image/png,image/avif,image/svg+xml,image/gif"
+                media_folder: "/static/media"
+                public_folder: "/media"
+                i18n: duplicate
+                hint: "Variante del logo para el modo oscuro. Vacío = se usa el logo claro en ambos modos."
+              - name: imageAlt
+                label: Texto alternativo del logo
+                widget: string
+                required: false
+                i18n: true
+                pattern: ["^[\\s\\S]{0,120}$", "Máximo 120 caracteres"]
+                hint: "Alt text para accesibilidad. Vacío = usa el texto de marca / nombre del sitio."
+              - name: imageHeight
+                label: Altura del logo (px)
+                widget: number
+                i18n: duplicate
+                value_type: int
+                default: 32
+                min: 16
+                max: 80
+                hint: "Altura del logo en píxeles (el ancho se calcula automáticamente)."
+              - name: showText
+                label: Mostrar texto junto al logo
+                widget: boolean
+                i18n: duplicate
+                default: true
+                hint: "Desactívalo para un navbar sólo-logo."
+          - name: items
+            label: Enlaces
+            widget: list
+            i18n: true
+            hint: "Enlaces de ancla del navbar. La 'clave' es el id de la seccion del home (servicios, planes, galeria, contacto) sin el '#'."
+            fields:
+              - { name: active, label: Activo, widget: boolean, default: true, i18n: duplicate, hint: "Desmarca para ocultar este enlace del navbar sin eliminarlo." }
+              - { name: key, label: Clave de la seccion, widget: string, i18n: duplicate, hint: "Id de la seccion del home (ej. servicios, planes, galeria, contacto). El sitio le antepone '#' automaticamente." }
+              - { name: label, label: Etiqueta, widget: string, i18n: true }
+
+      # --- Pie de pagina y redes sociales ---
+      - name: pie-de-pagina
+        label: Pie de página y redes sociales
+        file: src/data/configuracion/{{locale}}/pie-de-pagina.json
+        i18n: true
+        fields:
+          - { name: privacyPageId, label: Identificador de la página de Privacidad, widget: string, required: false, i18n: duplicate, default: "privacidad", pattern: ["^[a-z0-9-]+$", "Solo letras minusculas, numeros y guiones"], hint: "Id de la página de privacidad enlazada desde el pie." }
+          - { name: copyright, label: Copyright, widget: markdown, i18n: true }
+          - { name: madeWith, label: "Hecho con", widget: markdown, required: false, i18n: true }
+          - name: social
+            label: Redes sociales
+            widget: list
+            i18n: duplicate
+            fields:
+              - { name: active, label: Activo, widget: boolean, default: true, i18n: duplicate }
+              - name: key
+                label: Red social
+                widget: select
+                options:
+                  - { label: Email, value: email }
+                  - { label: Instagram, value: instagram }
+                  - { label: WhatsApp, value: whatsapp }
+                  - { label: Facebook, value: facebook }
+                  - { label: YouTube, value: youtube }
+                  - { label: TikTok, value: tiktok }
+                  - { label: Twitter / X, value: twitter }
+                  - { label: LinkedIn, value: linkedin }
+                  - { label: Telegram, value: telegram }
+                  - { label: Sitio web, value: website }
+                i18n: duplicate
+              - { name: url, label: "URL (https://, mailto:, tel:, o ruta relativa)", widget: string, pattern: ["^(https?://|mailto:|tel:|/).+", "Debe ser una URL https://, mailto:, tel: o ruta relativa"], i18n: duplicate }
+
+      # --- Traducciones (cadenas de interfaz) ---
+      - name: traducciones
+        label: Traducciones
+        file: src/data/configuracion/{{locale}}/traducciones.json
+        i18n: true
+        fields:
+          - name: sidebar
+            label: Tabla de contenidos
+            widget: object
+            i18n: true
+            fields:
+              - { name: onThisPage, label: "En esta página", widget: string, required: false, i18n: true }
+          - name: nav
+            label: Navegación
+            widget: object
+            i18n: true
+            fields:
+              - { name: openMenu, label: "Abrir menú (aria-label)", widget: string, required: false, i18n: true }
+              - { name: closeMenu, label: "Cerrar menú (aria-label)", widget: string, required: false, i18n: true }
+              - { name: primary, label: "Menú principal (aria-label del landmark)", widget: string, required: false, i18n: true }
+              - { name: skipToContent, label: "Saltar al contenido", widget: string, required: false, i18n: true }
+          - name: error
+            label: Páginas de error
+            widget: object
+            i18n: true
+            fields:
+              - { name: notFoundTitle, label: "Título 404", widget: string, required: false, i18n: true }
+              - { name: notFoundDescription, label: "Descripción 404", widget: text, required: false, i18n: true }
+              - { name: genericTitle, label: "Título error genérico", widget: string, required: false, i18n: true }
+              - { name: backHome, label: "Volver al inicio", widget: string, required: false, i18n: true }
+          - name: feed
+            label: Feeds RSS/Atom
+            widget: object
+            i18n: true
+            fields:
+              - { name: description, label: "Descripción del feed", widget: text, required: false, i18n: true }
+          - name: home
+            label: Inicio
+            widget: object
+            i18n: true
+            fields:
+              - { name: viewAll, label: "Ver todo", widget: string, required: false, i18n: true }
+              - { name: featuredProjectsTitle, label: "Título de planes destacados", widget: string, required: false, i18n: true }
+              - { name: recentPostsTitle, label: "Título de novedades", widget: string, required: false, i18n: true }
+          # Los siguientes bloques (portfolio, writing, projects, media, about)
+          # son cadenas heredadas del template que APU no muestra (no tiene blog,
+          # portafolio ni proyectos). Se exponen colapsados y opcionales solo
+          # para que el CMS los conserve al guardar (no se pierden datos).
+          - name: portfolio
+            label: "Portafolio (no usado)"
+            widget: object
+            collapsed: true
+            i18n: true
+            fields:
+              - { name: all, label: "Filtro: todo", widget: string, required: false, i18n: true }
+              - { name: backToPortfolio, label: Volver al portafolio, widget: string, required: false, i18n: true }
+              - { name: albumNotFound, label: Album no encontrado, widget: string, required: false, i18n: true }
+              - { name: photoCount_one, label: "Una foto (ej: {{count}} foto)", widget: string, required: false, i18n: true }
+              - { name: photoCount_other, label: "Varias fotos (ej: {{count}} fotos)", widget: string, required: false, i18n: true }
+              - { name: filterResultCount_one, label: "Un álbum mostrado", widget: string, required: false, i18n: true }
+              - { name: filterResultCount_other, label: "Varios álbumes mostrados", widget: string, required: false, i18n: true }
+              - { name: noResults, label: "Sin resultados", widget: string, required: false, i18n: true }
+          - name: writing
+            label: "Escritos (no usado)"
+            widget: object
+            collapsed: true
+            i18n: true
+            fields:
+              - { name: all, label: "Filtro: todo", widget: string, required: false, i18n: true }
+              - { name: opinion, label: Opinion, widget: string, required: false, i18n: true }
+              - { name: report, label: Informes, widget: string, required: false, i18n: true }
+              - { name: journal, label: Articulos, widget: string, required: false, i18n: true }
+              - { name: thesis, label: Tesis, widget: string, required: false, i18n: true }
+              - { name: backToWriting, label: Volver a escritos, widget: string, required: false, i18n: true }
+              - { name: postNotFound, label: Publicacion no encontrada, widget: string, required: false, i18n: true }
+              - { name: postNotFoundDesc, label: Descripcion publicacion no encontrada, widget: text, required: false, i18n: true }
+              - { name: originallyPublished, label: Publicado originalmente en, widget: string, required: false, i18n: true }
+              - { name: originallyWrittenIn, label: Escrito originalmente en, widget: string, required: false, i18n: true }
+              - { name: fallbackToEnglish, label: "Aviso de contenido en inglés", widget: text, required: false, i18n: true }
+              - { name: inLanguage, label: "En (idioma)", widget: string, required: false, i18n: true }
+              - name: languageNames
+                label: Nombres de idiomas
+                widget: object
+                collapsed: true
+                i18n: true
+                fields:
+                  - { name: es, label: español, widget: string, required: false, i18n: true }
+                  - { name: en, label: inglés, widget: string, required: false, i18n: true }
+                  - { name: fr, label: francés, widget: string, required: false, i18n: true }
+                  - { name: pt, label: portugués, widget: string, required: false, i18n: true }
+                  - { name: de, label: alemán, widget: string, required: false, i18n: true }
+                  - { name: it, label: italiano, widget: string, required: false, i18n: true }
+              - name: pagination
+                label: Paginación
+                widget: object
+                collapsed: true
+                i18n: true
+                fields:
+                  - { name: label, label: "Etiqueta (aria-label)", widget: string, required: false, i18n: true }
+                  - { name: newer, label: "Más recientes", widget: string, required: false, i18n: true }
+                  - { name: older, label: "Más antiguos", widget: string, required: false, i18n: true }
+                  - { name: pageXofY, label: "Página X de Y", widget: string, required: false, i18n: true }
+              - { name: filterResultCount_one, label: "Una publicación mostrada", widget: string, required: false, i18n: true }
+              - { name: filterResultCount_other, label: "Varias publicaciones mostradas", widget: string, required: false, i18n: true }
+              - { name: noResults, label: "Sin resultados", widget: string, required: false, i18n: true }
+          - name: projects
+            label: "Proyectos (no usado)"
+            widget: object
+            collapsed: true
+            i18n: true
+            fields:
+              - { name: skillsLabel, label: "Etiqueta de 'incluye'", widget: string, required: false, i18n: true }
+              - { name: all, label: "Filtro: todos", widget: string, required: false, i18n: true }
+              - { name: oss, label: "Categoría 1", widget: string, required: false, i18n: true }
+              - { name: professional, label: "Categoría 2", widget: string, required: false, i18n: true }
+              - { name: present, label: Presente, widget: string, required: false, i18n: true }
+          - name: media
+            label: "Medios (no usado)"
+            widget: object
+            collapsed: true
+            i18n: true
+            fields:
+              - { name: all, label: "Filtro: todos", widget: string, required: false, i18n: true }
+              - { name: video, label: Video, widget: string, required: false, i18n: true }
+              - { name: interview, label: Entrevista, widget: string, required: false, i18n: true }
+              - { name: podcast, label: Podcast, widget: string, required: false, i18n: true }
+              - { name: press, label: Prensa, widget: string, required: false, i18n: true }
+              - { name: conference, label: Conferencia, widget: string, required: false, i18n: true }
+              - { name: meetup, label: Meetup, widget: string, required: false, i18n: true }
+              - { name: webinar, label: Webinar, widget: string, required: false, i18n: true }
+              - { name: demo, label: Demo, widget: string, required: false, i18n: true }
+              - { name: noItems, label: Sin elementos, widget: string, required: false, i18n: true }
+          - name: about
+            label: "Sobre mí (no usado)"
+            widget: object
+            collapsed: true
+            i18n: true
+            fields:
+              - { name: present, label: Presente, widget: string, required: false, i18n: true }
+              - name: skillCategories
+                label: Categorías de habilidades
+                widget: object
+                collapsed: true
+                i18n: true
+                fields:
+                  - { name: Languages, label: Languages, widget: string, required: false, i18n: true }
+                  - { name: Frontend, label: Frontend, widget: string, required: false, i18n: true }
+                  - { name: Backend, label: Backend, widget: string, required: false, i18n: true }
+                  - { name: AI, label: AI, widget: string, required: false, i18n: true }
+                  - { name: Data, label: Data, widget: string, required: false, i18n: true }
+                  - { name: DevOps, label: DevOps, widget: string, required: false, i18n: true }
+                  - { name: Testing, label: Testing, widget: string, required: false, i18n: true }
+                  - { name: Databases, label: Databases, widget: string, required: false, i18n: true }
+                  - { name: Desktop, label: Desktop, widget: string, required: false, i18n: true }
+                  - { name: Documentation, label: Documentation, widget: string, required: false, i18n: true }
+                  - { name: Other, label: Other, widget: string, required: false, i18n: true }
+          - name: theme
+            label: Tema
+            widget: object
+            i18n: true
+            fields:
+              - { name: light, label: "Modo claro", widget: string, required: false, i18n: true }
+              - { name: dark, label: "Modo oscuro", widget: string, required: false, i18n: true }
+          - name: consent
+            label: Banner de consentimiento de cookies
+            widget: object
+            i18n: true
+            fields:
+              - { name: message, label: Mensaje del banner, widget: text, required: false, i18n: true }
+              - { name: accept, label: Botón Aceptar, widget: string, required: false, i18n: true }
+              - { name: decline, label: Botón Rechazar, widget: string, required: false, i18n: true }
+          - name: footer
+            label: Pie de página
+            widget: object
+            i18n: true
+            fields:
+              - { name: privacy, label: Texto del enlace a la política de privacidad, widget: string, required: false, i18n: true }
+
+      # -----------------------------------------------------------------------
+      # ARCHIVOS DE ESTRUCTURA DEL TEMPLATE (NO USADOS EN APU)
+      # -----------------------------------------------------------------------
+      # APU es de una sola página y no tiene blog (escritos), portafolio ni
+      # proyectos. Estos archivos existen solo porque el template los exige;
+      # se mantienen con valores por defecto y NO se muestran en el sitio.
+
+      # --- Escritos (no usado) ---
+      - name: escritos
+        label: "Escritos (no usado)"
+        file: src/data/configuracion/{{locale}}/escritos.json
+        i18n: true
+        fields:
+          - { name: writingPageId, label: Identificador de la página de Escritos, widget: string, required: false, i18n: duplicate, default: "escritos" }
+          - { name: writingPageSize, label: Posts por página, widget: number, required: false, i18n: duplicate, value_type: int, default: 10, min: 1 }
+          - name: feedSectionLabel
+            label: Etiqueta de sección para feeds RSS/Atom
+            widget: string
+            required: false
+            i18n: true
+            pattern: ["^[\\s\\S]{0,60}$", "Máximo 60 caracteres"]
+          - { name: defaultSort, label: Orden por defecto, widget: select, required: false, i18n: duplicate, default: "date-desc", options: ["date-desc", "date-asc", "updated-desc"] }
+          - { name: feedItemCount, label: Items máximos en feeds, widget: number, required: false, i18n: duplicate, value_type: int, default: 50, min: 1, max: 500 }
+          - { name: showSummary, label: Mostrar resumen, widget: boolean, required: false, i18n: duplicate, default: true }
+          - { name: showFilters, label: Mostrar filtros por tipo, widget: boolean, required: false, i18n: duplicate, default: true }
+          - { name: cardsPerRow, label: Tarjetas por fila, widget: number, required: false, i18n: duplicate, value_type: int, default: 3, min: 1, max: 6 }
+
+      # --- Portafolio (no usado) ---
+      - name: portafolio
+        label: "Portafolio (no usado)"
+        file: src/data/configuracion/{{locale}}/portafolio.json
+        i18n: true
+        fields:
+          - { name: portfolioPageId, label: Identificador de la página de Portafolio, widget: string, required: false, i18n: duplicate, default: "portafolio" }
+          - { name: defaultSort, label: Orden por defecto de los álbumes, widget: select, required: false, i18n: duplicate, default: "manual", options: ["manual", "name-asc", "name-desc"] }
+          - name: defaultFilter
+            label: Filtro inicial del portafolio
+            widget: string
+            required: false
+            i18n: duplicate
+            default: "all"
+            pattern: ["^[a-z][a-z0-9-]*$|^all$", "Use 'all' o un tag válido (minúsculas, números, guiones)"]
+
+      # --- Proyectos (no usado) ---
+      - name: proyectos
+        label: "Proyectos (no usado)"
+        file: src/data/configuracion/{{locale}}/proyectos.json
+        i18n: true
+        fields:
+          - { name: cardsPerRow, label: Tarjetas por fila (Proyectos), widget: number, required: false, i18n: duplicate, value_type: int, default: 3, min: 1, max: 6 }

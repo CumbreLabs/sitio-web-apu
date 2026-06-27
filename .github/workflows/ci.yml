@@ -1,0 +1,154 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    # Only run CI for changes that can actually affect the built site or the
+    # gates — pure docs / git-meta / editor-config changes skip CI to save
+    # runner minutes. Pre-commit still runs lint:md + spell + check:audit-doc
+    # locally, so doc regressions are caught before the commit lands.
+    #
+    # IMPORTANT: `*.md` matches TOP-LEVEL docs ONLY (README, CLAUDE, FORKING,
+    # MAINTENANCE, COMPARISON, SECURITY, AUDIT_CHECKLIST). Content markdown —
+    # blog posts + pages under `src/data/**/*.md` — is NOT matched by `*.md`
+    # (the glob `*` doesn't cross `/`), so editing a post or page still
+    # triggers the full build + frontmatter/i18n/image gates. Likewise the
+    # gate-CONFIG files (.prettierrc, cspell*, .markdownlint-cli2.jsonc,
+    # .nvmrc, Brewfile, eslint.config.js, *.config.*) are intentionally NOT
+    # ignored — changing how a gate behaves must re-run that gate.
+    paths-ignore:
+      - "*.md"
+      - "docs/**"
+      - "LICENSE"
+      - ".gitignore"
+      - ".gitattributes"
+      - ".editorconfig"
+      - ".vscode/**"
+      - ".idea/**"
+      - ".claude/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # Husky 9 is no-op in CI by default, but `HUSKY=0` is the documented
+  # belt-and-braces way to guarantee `npm ci`'s `prepare: husky` script
+  # doesn't try to install git hooks on a shallow checkout (which can fail
+  # with "git directory not found" depending on Husky/Git interactions). The
+  # CI runner has no git repo to install hooks INTO that matters anyway —
+  # CI gates are enforced via this workflow, not via pre-commit.
+  HUSKY: 0
+
+jobs:
+  check:
+    # Skip CI entirely for Dependabot PRs to save runner minutes. Dependabot
+    # bumps are reviewed + applied locally in batches (the dependabot cooldown
+    # config already throttles them), so per-PR CI here is wasted compute — the
+    # real gate runs when the maintainer's own commit lands on a PR/main.
+    # `github.actor` is "dependabot[bot]" for every Dependabot-opened PR; the
+    # job is skipped before a runner is provisioned, so it costs zero minutes.
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    # Hard cap to prevent runaway jobs from burning CI minutes. Current
+    # wall-clock is ~3-4 min; 10-min ceiling gives 2-3× headroom for the
+    # occasional slow npm install or workflow accumulation, but trips fast
+    # if a gate hangs (network stall, infinite loop in a new check).
+    timeout-minutes: 10
+    # Explicit minimum scope (read-only). PR gates never write to the repo —
+    # the job only needs checkout (`contents: read`). Without this block, the
+    # job would inherit GitHub's broader default token scopes, which zizmor
+    # flags as excessive-permissions.
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: sudo apt-get update && sudo apt-get install -y libimage-exiftool-perl
+      - run: npm ci
+      - run: npm run check
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run check:images
+      - run: npm run check:i18n
+      - run: npm run check:cms
+      - run: npm run check:fork
+      - run: npm run check:required-config
+      - run: npm run check:frontmatter
+      - run: npm run check:ci-parity
+      - run: npm run check:node-pin
+      - run: npm run check:audit-doc
+      - run: npm run check:orphan-images
+      - run: npm run check:nav-slugs
+      - run: npm run check:required-paginas
+      - run: npm run check:portfolio-parity
+      - run: npm run check:album-weight
+      - run: npm run check:licenses
+      - run: npm run check:actions-pinned
+      - run: npm run spell
+      - run: npm run lint:md
+      # Vitest unit suite — ~200 ms, covers markdown/i18n/routes/date/hooks
+      # logic. Heavier checks (cross-browser smoke, axe-core scan) stay local
+      # because they need browser binaries that would balloon CI time.
+      - run: npm test
+      - run: npm run copyright
+
+      # Regenerate lighthouse configs from current data and fail if they're not in sync
+      # with what's committed. Forces devs to commit regenerated configs after a slug rename.
+      # The generator nukes + rewrites `lighthouse/` so untracked / removed files also count
+      # as drift (`git status --porcelain` covers both renamed files and content edits).
+      - name: Verify lighthouse configs are up to date
+        run: |
+          npm run lighthouse:config
+          if [ -n "$(git status --porcelain lighthouse/)" ]; then
+            echo "::error::lighthouse/*.json are out of sync with src/data/. Run 'npm run lighthouse:config' and commit the result."
+            git --no-pager diff lighthouse/
+            git status --porcelain lighthouse/
+            exit 1
+          fi
+
+      # Regenerate favicons from the source declared in sitio.json and fail if the
+      # committed PNGs / favicon.ico / manifest don't match. Catches the case where
+      # someone bumps sitio.json's favicon path with --no-verify and skips the hook.
+      - name: Verify favicons are up to date
+        run: |
+          npm run favicons
+          if ! git diff --quiet static/favicon static/favicon.ico; then
+            echo "::error::Favicons are out of sync with src/data/sitio.json. Run 'npm run favicons' and commit the result."
+            git --no-pager diff --stat static/favicon static/favicon.ico
+            exit 1
+          fi
+
+      # Regenerate OG-image landscape variants and fail if the committed PNGs/WebPs
+      # don't match what the generator produces from the current static/media/. Catches
+      # the case where a new portrait cover lands without a regen (LinkedIn unfurl
+      # would fall back to fondo-paisaje.webp until the next pre-commit run).
+      - name: Verify OG-image variants are up to date
+        run: |
+          npm run og:images
+          if [ -n "$(git status --porcelain static/og/)" ]; then
+            echo "::error::static/og/*.webp are out of sync with static/media/. Run 'npm run og:images' and commit the result."
+            git --no-pager diff static/og/
+            git status --porcelain static/og/
+            exit 1
+          fi
+
+      - run: npm run build
+      - run: npm run check:bundle
+      - run: npm run check:jsonld
+      - run: npm run check:canonical-host
+
+      # Monolingual-build smoke test (AUDIT_CHECKLIST.md #18.8). Spins up a
+      # temp git worktree, deletes the EN locale, sets `languages: ["es"]`,
+      # rebuilds. Proves the i18n abstraction holds — a fork that only
+      # ships one language can do so via config alone, no code edits.
+      # ~1-2 min wall-clock; runs LAST so a failure here doesn't block the
+      # earlier gates from surfacing.
+      - run: npm run check:monolingual-build

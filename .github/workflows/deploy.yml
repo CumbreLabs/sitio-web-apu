@@ -1,0 +1,171 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Skip the rebuild + redeploy for pushes that can't change the built
+  # artifact (docs / git-meta / editor config). GitHub Pages keeps serving the
+  # previous deploy, which is correct — nothing shipped, so nothing to
+  # re-publish. `*.md` is top-level-only: content markdown under
+  # `src/data/**/*.md` (posts + pages) still deploys. Mirrors ci.yml's
+  # paths-ignore. workflow_dispatch is unfiltered so you can always force a
+  # manual deploy (e.g. to test a deploy.yml change).
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+      - "docs/**"
+      - "LICENSE"
+      - ".gitignore"
+      - ".gitattributes"
+      - ".editorconfig"
+      - ".vscode/**"
+      - ".idea/**"
+      - ".claude/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
+  workflow_dispatch:
+
+# Workflow-level permissions are read-only by default — only the
+# `build-and-deploy` job that actually publishes to GitHub Pages declares
+# the broader `pages: write` + `id-token: write` scopes it needs. The
+# `smoke` job does not need them. Keeping write-scopes scoped to a single
+# job is what zizmor's `excessive-permissions` audit flags when they live
+# at the workflow level.
+permissions:
+  contents: read
+
+# Never cancel a deploy mid-flight, even if a newer commit lands on `main`.
+# Sveltia CMS uses git commits as its backend, so editors can land 2-3 commits
+# in rapid succession (e.g. update a writing post + fix a typo immediately
+# after). `cancel-in-progress: true` would mean the first commit's deploy gets
+# killed and only the latest content reaches production — but a canceled
+# upload-pages-artifact / deploy-pages can also leave the GitHub Pages
+# environment in an inconsistent state (half-uploaded artifact, then re-deploy
+# races against it). Setting `false` queues the second deploy to wait for the
+# first to finish cleanly, then runs it. Every commit eventually deploys, in
+# order, and the final state is always the latest. Trade-off: deploy is
+# serialized rather than coalesced, but for a personal site that pushes a few
+# times a week the queue is essentially always empty.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+# Opt all bundled JavaScript actions into Node 24 (Node 20 is deprecated).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # Hard cap. Build + upload-pages-artifact + deploy-pages typically
+    # completes in ~4-6 min. 10-min ceiling traps a hung GH Pages API call
+    # (rare but documented; the artifact upload can stall on Azure backend
+    # blips) before it consumes a runner indefinitely.
+    timeout-minutes: 10
+    # `pages: write` is required by actions/configure-pages + deploy-pages.
+    # `id-token: write` is required by deploy-pages for OIDC attestation of
+    # the artifact upload. Both stay scoped to this job, not the workflow.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: sudo apt-get update && sudo apt-get install -y libimage-exiftool-perl
+      - run: npm ci
+      # Deploy runs the bare minimum to produce the artifact: install,
+      # copyright-embed (mutates static/ — must precede build so srcset
+      # variants inherit fresh EXIF/XMP via prebuild's optimize-images),
+      # build. Every validator (type-check, lint, format:check, lighthouse:config,
+      # check:bundle, check:canonical-host, cross-cutting check:* family) is a
+      # PR-gate owned by ci.yml. Re-running them here would only delay hotfixes
+      # without catching anything ci.yml didn't already catch before the commit
+      # reached main.
+      - run: npm run copyright
+      - run: npm run build
+
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+
+      - id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  smoke:
+    # Post-deploy verification (AUDIT_CHECKLIST.md #13.17). Hits the live URL
+    # for the canonical home + sitemap + admin and asserts each returns 200
+    # with the expected Content-Type. Catches deploys that succeed but ship a
+    # corrupted artifact (zero-byte HTML, wrong MIME type, GH Pages stuck on a
+    # previous version). Independent job so the deploy step itself doesn't get
+    # blocked by a flaky DNS / CDN propagation lag — if smoke fails, the
+    # deploy is already live and the failure surfaces in Actions for diagnosis.
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Read-only: smoke only checkouts code and curls the live site. Pages
+    # write-scopes stay on the deploy job above.
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Curl key URLs and assert 200 + Content-Type
+        env:
+          # Pipe the deploy job's output URL through an env var instead of
+          # interpolating `${{ ... }}` directly into the bash body. zizmor's
+          # `template-injection` audit flags inline expansion because GH
+          # Actions splices the value into the script before bash sees it —
+          # an attacker-controllable output could inject shell metachars.
+          # Reading from `$PAGE_URL` keeps the value as data, not code.
+          PAGE_URL: ${{ needs.build-and-deploy.outputs.page_url || '' }}
+        run: |
+          set -euo pipefail
+          # Wait a few seconds for GH Pages CDN propagation after deploy-pages reports success.
+          sleep 10
+          # Fallback URL pulled from sitio.json instead of hardcoded so a
+          # fork on a different domain works without editing this workflow.
+          # The first `page_url` would normally win (set by deploy-pages
+          # when the environment URL is published), but it's an unreliable
+          # cross-job output in some edge cases — sitio.json is the
+          # source-of-truth fallback. `jq -r` strips the JSON quotes.
+          FALLBACK_URL=$(jq -r .url src/data/configuracion/es/sitio.json)
+          URL="${PAGE_URL:-$FALLBACK_URL}"
+          URL="${URL%/}"
+          declare -a CHECKS=(
+            "${URL}/                     text/html"
+            "${URL}/es/                  text/html"
+            "${URL}/en/                  text/html"
+            "${URL}/sitemap.xml          application/xml"
+            "${URL}/robots.txt           text/plain"
+          )
+          fail=0
+          for entry in "${CHECKS[@]}"; do
+            path=$(echo "$entry" | awk '{print $1}')
+            want=$(echo "$entry" | awk '{print $2}')
+            status=$(curl -s -o /dev/null -w "%{http_code}" -L "$path")
+            ctype=$(curl -s -o /dev/null -w "%{content_type}" -L "$path")
+            if [ "$status" != "200" ]; then
+              echo "::error::FAIL $path → HTTP $status (expected 200)"
+              fail=1
+              continue
+            fi
+            if [[ "$ctype" != *"$want"* ]]; then
+              echo "::error::FAIL $path → Content-Type $ctype (expected to contain $want)"
+              fail=1
+              continue
+            fi
+            echo "✓ $path → 200 $ctype"
+          done
+          exit $fail

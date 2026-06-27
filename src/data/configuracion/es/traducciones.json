@@ -1,0 +1,123 @@
+{
+  "sidebar": {
+    "onThisPage": "En esta página"
+  },
+  "nav": {
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "primary": "Navegación principal",
+    "skipToContent": "Saltar al contenido",
+    "book": "Reservar",
+    "switchLanguage": "Cambiar a inglés"
+  },
+  "error": {
+    "notFoundTitle": "Página no encontrada",
+    "notFoundDescription": "La página que buscas no existe o fue movida.",
+    "genericTitle": "Algo salió mal",
+    "backHome": "Volver al inicio"
+  },
+  "feed": {
+    "description": "Aventuras, salidas guiadas y novedades de APU Viajes de Montaña."
+  },
+  "home": {
+    "viewAll": "Ver todo",
+    "featuredProjectsTitle": "Planes Destacados",
+    "recentPostsTitle": "Novedades"
+  },
+  "portfolio": {
+    "all": "Todo",
+    "backToPortfolio": "Volver al portafolio",
+    "albumNotFound": "Álbum no encontrado",
+    "photoCount_one": "{{count}} foto",
+    "photoCount_other": "{{count}} fotos",
+    "filterResultCount_one": "{{count}} álbum mostrado",
+    "filterResultCount_other": "{{count}} álbumes mostrados",
+    "noResults": "Ningún álbum coincide con este filtro."
+  },
+  "writing": {
+    "all": "Todo",
+    "opinion": "Opinión",
+    "report": "Informes",
+    "journal": "Artículos",
+    "thesis": "Tesis",
+    "backToWriting": "Volver a Escritos",
+    "postNotFound": "Publicación no encontrada",
+    "postNotFoundDesc": "La publicación que buscas no existe.",
+    "originallyPublished": "Publicado originalmente en",
+    "originallyWrittenIn": "Escrito originalmente en",
+    "fallbackToEnglish": "La versión en español de este texto aún no está disponible — a continuación se muestra el original en inglés.",
+    "inLanguage": "en",
+    "languageNames": {
+      "es": "español",
+      "en": "inglés",
+      "fr": "francés",
+      "pt": "portugués",
+      "de": "alemán",
+      "it": "italiano"
+    },
+    "pagination": {
+      "label": "Paginación",
+      "newer": "Más recientes",
+      "older": "Más antiguos",
+      "pageXofY": "Página {{current}} de {{total}}"
+    },
+    "filterResultCount_one": "{{count}} publicación mostrada",
+    "filterResultCount_other": "{{count}} publicaciones mostradas",
+    "noResults": "Ninguna publicación coincide con este filtro."
+  },
+  "projects": {
+    "skillsLabel": "Incluye",
+    "all": "Todos",
+    "oss": "Escalada",
+    "professional": "Trekking",
+    "present": "Presente"
+  },
+  "media": {
+    "all": "Todos",
+    "video": "Video",
+    "interview": "Entrevista",
+    "podcast": "Podcast",
+    "press": "Prensa",
+    "conference": "Conferencia",
+    "meetup": "Meetup",
+    "webinar": "Webinar",
+    "demo": "Demo",
+    "noItems": "No se encontraron elementos"
+  },
+  "about": {
+    "present": "Presente",
+    "skillCategories": {
+      "Languages": "Lenguajes",
+      "Frontend": "Frontend",
+      "Backend": "Backend",
+      "AI": "IA",
+      "Data": "Datos",
+      "DevOps": "DevOps",
+      "Testing": "Testing",
+      "Databases": "Bases de datos",
+      "Desktop": "Desktop",
+      "Documentation": "Documentación",
+      "Other": "Otros"
+    }
+  },
+  "theme": {
+    "light": "Modo claro",
+    "dark": "Modo oscuro"
+  },
+  "consent": {
+    "message": "Este sitio usa cookies de análisis para entender cómo lo visitan. Tu elección se recuerda en este dispositivo.",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
+  },
+  "footer": {
+    "privacy": "Política de privacidad"
+  },
+  "gallery": {
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "goToSlide": "Ir a la diapositiva"
+  },
+  "contact": {
+    "whatsapp": "Contáctanos por WhatsApp"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "title": "About Us",
+  "text": "APU Mountain Travel is a company dedicated to guiding people in authentic climbing and trekking experiences, with a focus on respect for the mountain, safety and inner growth. We specialize in helping gym climbers take their first steps on rock, with carefully selected routes and guides with experience and cultural sensitivity.",
+  "stats": [
+    { "number": "10+", "label": "Years of Experience" },
+    { "number": "500+", "label": "Guided Adventures" },
+    { "number": "100%", "label": "Safety Guaranteed" }
+  ]
+}

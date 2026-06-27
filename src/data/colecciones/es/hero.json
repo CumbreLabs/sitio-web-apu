@@ -1,0 +1,13 @@
+{
+  "title": "APU VIAJES DE MONTAÑA",
+  "subtitle": "Escalada y Trekking en Colombia",
+  "ctaPrimary": {
+    "label": "Ver Planes",
+    "href": "#planes"
+  },
+  "ctaSecondary": {
+    "label": "Contactar",
+    "href": "https://wa.me/573160557537"
+  },
+  "backgroundImage": "/media/hero-escalada-roca.jpg"
+}

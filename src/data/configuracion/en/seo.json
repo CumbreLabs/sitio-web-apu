@@ -1,0 +1,12 @@
+{
+  "description": "APU Viajes de Montaña offers unique rock climbing and mountaineering experiences in Colombia. Courses, guided outings and adventures for all levels.",
+  "titleTemplate": "{title} | {name}",
+  "defaultOGImage": "/media/new-logo.png",
+  "defaultBackgroundImage": "",
+  "ogLocales": {
+    "es": "es_CO",
+    "en": "en_US"
+  },
+  "twitterCard": "summary_large_image",
+  "twitterHandle": ""
+}

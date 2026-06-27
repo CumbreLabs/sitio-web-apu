@@ -1,0 +1,10 @@
+{
+  "writingPageId": "escritos",
+  "writingPageSize": 10,
+  "feedSectionLabel": "Blog",
+  "defaultSort": "date-desc",
+  "feedItemCount": 50,
+  "showSummary": true,
+  "showFilters": false,
+  "cardsPerRow": 3
+}

@@ -1,0 +1,69 @@
+{
+  "title": "Nuestros Servicios",
+  "featured": {
+    "emoji": "🏔️",
+    "title": "Curso Especializado",
+    "subtitle": "Transición del Muro a la Roca",
+    "description": "Curso de 5 días para escalar de forma autónoma y segura rutas deportivas y tradicionales.",
+    "badge": "Máximo 3 personas por instructor",
+    "price": "$1.650.000",
+    "perks": "✓ Póliza Magenta ✓ Equipos certificados UIAA ✓ Certificado"
+  },
+  "plansTitle": "Planes Destacados",
+  "plans": [
+    {
+      "title": "1. Escalada Básica",
+      "subtitle": "Ideal para principiantes y niños",
+      "items": ["Altura: 30-25m", "Dificultad: Fácil", "¡Disfruta de paisajes únicos!"],
+      "price": "$140.000"
+    },
+    {
+      "title": "2. Escalada Multilargo",
+      "subtitle": "Sin experiencia previa necesaria",
+      "items": [
+        "Altura: 90m",
+        "Dificultad: Fácil-Moderada",
+        "¡Llega a la cima con guías expertos!"
+      ],
+      "price": "$240.000"
+    },
+    {
+      "title": "3. Vía Ferrata",
+      "subtitle": "Aventura segura para todas las edades",
+      "items": ["Altura: 90m", "Dificultad: Fácil-Moderada", "¡Para todas las edades!"],
+      "price": "$180.000"
+    },
+    {
+      "title": "4. Rappel",
+      "subtitle": "Emoción extrema",
+      "items": ["Descenso: 90m", "Dificultad: Media", "¡Ideal para los más atrevidos!"],
+      "price": "$200.000"
+    },
+    {
+      "title": "Caminatas",
+      "subtitle": "Explora la naturaleza",
+      "items": [
+        "Antenas de Guita (4km): $90.000",
+        "Rocas de Suesca (7km): $110.000",
+        "Dificultad: Fácil a Moderada"
+      ],
+      "price": ""
+    },
+    {
+      "title": "Expediciones",
+      "subtitle": "Conquista las cumbres",
+      "items": [
+        "Nevado Santa Isabel (4,965m)",
+        "Nevado del Tolima (5,220m)",
+        "Incluye póliza Colasistencia"
+      ],
+      "price": "Desde $1.450.000"
+    }
+  ],
+  "discount": {
+    "title": "⭐ 10% DTO para miembros de",
+    "linkLabel": "TREPA",
+    "linkHref": "https://www.trepa.co",
+    "body": "Ofrecemos planes de montaña a: Parque de los Nevados, Perú, Ecuador y Bolivia"
+  }
+}

@@ -1,0 +1,448 @@
+@import "tailwindcss";
+
+/* Self-hosted brand fonts for APU Viajes de Montaña. Served from
+   `static/fonts/` (which is exposed at `/fonts/` at runtime), so there is no
+   third-party request to fonts.googleapis.com / fonts.gstatic.com (privacy
+   win). Two faces, matching the original site:
+     - Outfit          → sans / body / nav. The variable-weight file covers
+                          every weight (100–900) in one request.
+     - AirConditioner  → display / heading face (single weight).
+   The `--font-*` token map in `theme.css` controls which family wins where:
+   `--font-sans` → Outfit, `--font-serif` → AirConditioner. */
+@font-face {
+  font-family: "Outfit";
+  src: url("/fonts/Outfit-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AirConditioner";
+  src: url("/fonts/AirConditioner.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* THEME tokens — colors, fonts, radii, shadows. Edit `src/theme.css` to re-skin
+   the entire site without touching component markup. Tailwind v4 reads the
+   `@theme` block at build time and exposes every token as a `bg-*` / `text-*` /
+   `border-*` utility automatically. */
+@import "./theme.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Font fallback metrics to prevent CLS during font load. Both APU faces are
+   sans-serif, so Arial is the local stand-in for each; the size-adjust /
+   override values keep the fallback's line box close to the web font's so
+   text doesn't reflow when Outfit / AirConditioner finish loading. */
+@font-face {
+  font-family: "Outfit Fallback";
+  src: local("Arial");
+  size-adjust: 100%;
+  ascent-override: 100%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "AirConditioner Fallback";
+  src: local("Arial");
+  size-adjust: 100%;
+  ascent-override: 95%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* APU sets body / UI / nav in Outfit (the sans token); AirConditioner (the
+     serif token) is reserved for the hero wordmark only. */
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+[data-theme="dark"] body {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-dark);
+}
+
+/* Section heading underline — the original APU site draws a short orange bar
+   (60×3px) centered beneath every section <h2> via `h2::after`. Exposed as a
+   reusable class so each section component opts in with `class="section-title"`
+   instead of repeating the pseudo-element. Color comes from the brand token. */
+.section-title {
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--color-brand-orange);
+}
+
+/* Visible focus ring on every keyboard-focused control. Tailwind v4 has no
+   default focus style; without this, keyboard users can't see where they are.
+   `:focus-visible` only fires for keyboard focus, so mouse clicks don't flash. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+[data-theme="dark"] :focus-visible {
+  outline-color: var(--color-accent-dark);
+}
+
+/* Skip-to-main link — visually hidden until focused via Tab. Lets keyboard
+   users jump past the navbar instead of tabbing through every nav item. */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-accent);
+  color: white;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  z-index: 100;
+  transform: translateY(-100%);
+  transition: transform 0.15s ease-out;
+}
+
+[data-theme="dark"] .skip-link {
+  background-color: var(--color-accent-dark);
+  color: var(--color-bg-dark);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* GTM noscript iframe — hidden, no layout impact. Inline style would violate
+   the HTML validator's `no-inline-style` rule, so it's promoted to a class. */
+.gtm-noscript {
+  display: none;
+  visibility: hidden;
+}
+
+/* Respect users who set OS-level reduced motion (vestibular disorders, etc.).
+   Disables smooth scroll, transitions, and animations site-wide. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scroll offset for anchored sections */
+section[id],
+h2[id],
+h3[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--color-surface-dark);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-muted-dark);
+}
+
+/* Print stylesheet. Optimized for reading writing posts on paper: drop the
+   navbar / footer / sidebar chrome, force a single column, switch to a
+   black-on-white palette regardless of the user's chosen theme, and expand
+   abbreviated URLs after links so the printed page is self-contained. */
+@media print {
+  :root,
+  [data-theme="dark"] {
+    color-scheme: light;
+  }
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  /* Hide site chrome. The sidebar nav, mobile menu, theme toggle, language
+     toggle, cookie banner, and back-to-top arrows have no meaning on paper. */
+  nav,
+  footer,
+  .skip-link,
+  [aria-label="Cookie consent"] {
+    display: none !important;
+  }
+  /* Disable any sticky positioning so layered chrome doesn't print on top. */
+  * {
+    position: static !important;
+    box-shadow: none !important;
+  }
+  /* Force colors of headings/text/links to print-friendly black on white. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  a {
+    color: black !important;
+  }
+  /* Expand `<a href="…">label</a>` to `label (https://…)` for offline value.
+     Skip mailto / tel / fragment links — the URL would be noisy / useless. */
+  a[href]:not([href^="#"]):not([href^="mailto:"]):not([href^="tel:"]):after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #444 !important;
+    word-break: break-all;
+  }
+  /* Discourage page breaks inside paragraphs, headings, and figures so the
+     printout flows naturally. */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  blockquote,
+  figure,
+  img {
+    page-break-inside: avoid;
+  }
+  /* Constrain image width so wide hero images don't push off the page. */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* Prose blog styles — goanpeca uses sans-serif headings + Lora serif body */
+.prose-blog {
+  line-height: 1.8;
+}
+
+.prose-blog h2 {
+  font-family: var(--font-sans);
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.prose-blog h3 {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+.prose-blog h4 {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .prose-blog h2,
+[data-theme="dark"] .prose-blog h3,
+[data-theme="dark"] .prose-blog h4 {
+  color: var(--color-text-dark);
+}
+
+.prose-blog p {
+  margin-bottom: 1.25em;
+}
+
+/*
+ * Center markdown body images and give them breathing room.
+ *
+ * Markdown renders `![alt](src)` as `<img>` inside a `<p>` (block-level
+ * paragraph wrapper). `display: block` + `margin: … auto` centers the image
+ * within the column, and the surrounding `<p>` gets `text-align: center` so
+ * an optional caption (text following the image inside the same paragraph)
+ * also stays centered. `max-width: 100%` keeps wide images from breaking
+ * out of the prose column on narrow viewports; `height: auto` preserves
+ * aspect ratio paired with the explicit width/height attrs `injectSrcset`
+ * writes for CLS.
+ *
+ * The `:has()` guard limits the paragraph centering to image-only blocks —
+ * a paragraph that mixes text and inline images keeps left alignment.
+ */
+.prose-blog p:has(> img:only-child) {
+  text-align: center;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.prose-blog img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+}
+
+.prose-blog a {
+  color: var(--color-accent);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-blog a:hover {
+  opacity: 0.8;
+}
+
+[data-theme="dark"] .prose-blog a {
+  color: var(--color-accent-dark);
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  margin: 0 0 1.25em 1.5em;
+  padding-left: 0.5em;
+}
+
+.prose-blog ul {
+  list-style: disc;
+}
+
+.prose-blog ol {
+  list-style: decimal;
+}
+
+.prose-blog li {
+  margin-bottom: 0.5em;
+}
+
+.prose-blog blockquote {
+  margin: 1.5em 0;
+  padding: 0.5em 1em;
+  border-left: 3px solid var(--color-accent);
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+[data-theme="dark"] .prose-blog blockquote {
+  border-left-color: var(--color-accent-dark);
+  color: var(--color-muted-dark);
+}
+
+.prose-blog hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+[data-theme="dark"] .prose-blog hr {
+  border-top-color: var(--color-border-dark);
+}
+
+.prose-blog code {
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+[data-theme="dark"] .prose-blog code {
+  background: var(--color-surface-dark);
+  color: var(--color-text-dark);
+}
+
+.prose-blog pre {
+  margin: 1.5em 0;
+  padding: 1em;
+  border-radius: 4px;
+  background: var(--color-surface);
+  overflow-x: auto;
+}
+
+[data-theme="dark"] .prose-blog pre {
+  background: var(--color-surface-dark);
+}
+
+.prose-blog pre code {
+  padding: 0;
+  background: transparent;
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+
+/*
+ * Shiki dual-theme styling. Code blocks are pre-tokenized at build time by
+ * `scripts/vite-plugin-highlighted-code.mjs` and arrive in the page as
+ * `<pre class="shiki shiki-themes github-light github-dark-dimmed" …>` with
+ * each span carrying `style="color:LIGHT;--shiki-dark:DARK"` inline styles
+ * (this is Shiki's `defaultColor: "light"` + `themes: { light, dark }` output
+ * shape). The dark-mode toggle swaps the inline `color` over to the
+ * `--shiki-dark` custom property; `!important` is mandatory because the
+ * source-of-truth is an inline style attribute that would otherwise win.
+ *
+ * Override `.prose-blog pre` background so Shiki's own bg sets the tone —
+ * the surface tokens are reset for code blocks specifically (we keep our
+ * other prose bg utilities for blockquotes / pull-quotes / etc.).
+ */
+.prose-blog pre.shiki {
+  padding: 1em;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+.prose-blog pre.shiki code {
+  background: transparent;
+  padding: 0;
+}
+
+[data-theme="dark"] .prose-blog pre.shiki,
+[data-theme="dark"] .prose-blog pre.shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}

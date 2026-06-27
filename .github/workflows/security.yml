@@ -1,0 +1,81 @@
+name: Security
+
+# Runs zizmor (GitHub Actions security linter) on every push + PR + weekly
+# cron + manual dispatch. Findings surface as inline workflow annotations
+# (Files-changed tab on PRs + the run log) and as the job's pass/fail status
+# on the PR. The weekly scheduled run catches new audits that ship in zizmor
+# releases against workflows that haven't otherwise changed.
+#
+# SARIF / Code Scanning is intentionally OFF: this repo doesn't have GitHub
+# Advanced Security enabled (free for public repos but requires a one-click
+# toggle in Settings → Code security & analysis → Code scanning that the
+# maintainer hasn't flipped). Without it, the SARIF upload step fails with
+# "Code scanning is not enabled for this repository" — turning the whole
+# job red even when zizmor passes. Workflow annotations cover the same
+# need (per-line findings on PR diffs) until/unless Code Scanning is
+# enabled, at which point flip `advanced-security: true` and add
+# `security-events: write` back to the job's permissions block.
+
+on:
+  # zizmor only audits files under .github/ (workflows + dependabot.yml), so
+  # push/PR runs are scoped to that path — a src/ or docs-only change can't
+  # introduce a workflow-security finding, so re-scanning would just burn
+  # minutes. The weekly cron + manual dispatch stay UNSCOPED (`paths:` can't
+  # apply to schedule/dispatch anyway) so new zizmor audit rules still get
+  # caught against otherwise-unchanged workflows on the Monday run.
+  push:
+    branches: [main]
+    paths:
+      - ".github/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/**"
+  workflow_dispatch:
+  schedule:
+    # 04:30 UTC every Monday — slightly offset from dependabot's weekly slot
+    # so the two don't pile up at the same hour.
+    - cron: "30 4 * * 1"
+
+# Pin Node 24 for any nested JS actions, matching every other workflow.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# Workflow-level permissions are EMPTY by default — every job declares only
+# what it actually needs. The zizmor scan job needs read-only repo access
+# (checkout) — no security-events:write because SARIF upload is disabled.
+permissions: {}
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  zizmor:
+    name: Zizmor audit
+    # Skip for Dependabot PRs so Dependabot never triggers a CI run. The
+    # github-actions ecosystem bumps edit `.github/workflows/*`, which matches
+    # this workflow's `pull_request` paths filter — without this guard a
+    # Dependabot action-bump PR would spin up a zizmor run. Bumps are reviewed
+    # + applied locally in batches (see dependabot.yml cooldown); zizmor still
+    # audits the maintainer's own commit when it lands on main (push) and on
+    # the weekly schedule. Mirrors ci.yml's Dependabot skip. `github.actor` is
+    # "dependabot[bot]" for every Dependabot-opened PR, so the job is skipped
+    # before a runner is provisioned (zero minutes).
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read # checkout
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
+        with:
+          # SARIF upload is disabled — see the workflow-level comment for
+          # why. Workflow annotations are mutually exclusive with
+          # advanced-security, so this pair has to flip together.
+          advanced-security: false
+          annotations: true

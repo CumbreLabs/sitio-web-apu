@@ -1,0 +1,42 @@
+// markdownlint-cli2 config — enables rules that catch real bugs in our
+// markdown docs (broken anchor links, heading-level skips, duplicate
+// headings, missing image alt text) and disables stylistic-only rules that
+// would just churn the existing prose.
+//
+// Run: npm run lint:md
+// See: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+{
+  "config": {
+    "default": true,
+
+    // Disabled rules — these are stylistic preferences, not bugs. Prettier
+    // already owns whitespace + wrapping; cspell owns typos. Re-enable a rule
+    // here only if drift in that dimension actually broke something.
+    "MD013": false, // line-length — Prettier wraps at printWidth=100; markdownlint's default 80 would re-flag every paragraph
+    "MD024": { "siblings_only": true }, // no-duplicate-heading — allow same heading text under different parents (e.g. "Examples" in two sections)
+    "MD033": false, // no-inline-html — we intentionally embed <details>, <kbd>, <picture>, <sub> etc.
+    "MD034": false, // no-bare-urls — bare URLs render fine in GFM and are sometimes the right call
+    "MD036": false, // no-emphasis-as-heading — sometimes a bold lead-in is the right structure inside a list item
+    "MD041": false, // first-line-h1 — frontmatter / sub-pages can start with a blockquote callout
+    "MD046": false, // code-block-style — both fenced and indented sometimes appear in adjacent sections
+    "MD049": false, // emphasis-style — Prettier already normalizes
+    "MD050": false, // strong-style — Prettier already normalizes
+    "MD060": false, // table-column-style — wide tables (e.g. AUDIT_CHECKLIST rows with 1000-char prose cells) intentionally do not pipe-align; Prettier doesn't enforce it either
+    "MD028": false, // no-blanks-blockquote — two `>` paragraphs separated by a blank line render as two distinct GFM blockquotes; this is intentional for adjacent unrelated callouts
+
+    // Enabled with tighter settings (defaults are listed for clarity)
+    "MD001": true, // heading-increment — h1 → h3 skips are almost always a typo
+    "MD003": { "style": "atx" }, // heading-style — # style only; no underline-h1 anywhere
+    "MD025": true, // single-h1 — exactly one h1 per doc
+    "MD040": true, // fenced-code-language — every ``` block must declare its language (helps highlighting + AI parsing)
+    "MD045": true, // no-alt-text — images without alt are accessibility bugs
+    "MD051": true, // link-fragments — flags broken `#anchor` links to non-existent headings (the killer feature)
+    "MD053": true, // link-image-reference-definitions — flags orphan `[ref]:` definitions left after edits
+  },
+
+  // What to lint. Top-level docs + the per-feature design notes under docs/upstream-issues/.
+  // Excludes: CMS-authored escritos posts (Arena's content, separate authoring conventions),
+  // generated TypeDoc output (docs/), and node_modules.
+  "globs": ["*.md", "docs/upstream-issues/**/*.md", ".github/**/*.md", ".claude/**/*.md"],
+  "ignores": ["node_modules/**", "docs/**", "dist/**", ".svelte-kit/**", "src/data/escritos/**"],
+}

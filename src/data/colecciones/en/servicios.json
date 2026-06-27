@@ -1,0 +1,65 @@
+{
+  "title": "Our Services",
+  "featured": {
+    "emoji": "🏔️",
+    "title": "Specialized Course",
+    "subtitle": "From the Wall to the Rock",
+    "description": "A 5-day course to climb sport and traditional routes autonomously and safely.",
+    "badge": "Maximum 3 people per instructor",
+    "price": "$1,650,000",
+    "perks": "✓ Magenta insurance ✓ UIAA-certified gear ✓ Certificate"
+  },
+  "plansTitle": "Featured Plans",
+  "plans": [
+    {
+      "title": "1. Basic Climbing",
+      "subtitle": "Ideal for beginners and children",
+      "items": ["Height: 30-25m", "Difficulty: Easy", "Enjoy unique landscapes!"],
+      "price": "$140,000"
+    },
+    {
+      "title": "2. Multipitch Climbing",
+      "subtitle": "No prior experience required",
+      "items": ["Height: 90m", "Difficulty: Easy-Moderate", "Reach the summit with expert guides!"],
+      "price": "$240,000"
+    },
+    {
+      "title": "3. Via Ferrata",
+      "subtitle": "Safe adventure for all ages",
+      "items": ["Height: 90m", "Difficulty: Easy-Moderate", "For all ages!"],
+      "price": "$180,000"
+    },
+    {
+      "title": "4. Rappel",
+      "subtitle": "Extreme thrill",
+      "items": ["Descent: 90m", "Difficulty: Medium", "Ideal for the most daring!"],
+      "price": "$200,000"
+    },
+    {
+      "title": "Hikes",
+      "subtitle": "Explore nature",
+      "items": [
+        "Antenas de Guita (4km): $90,000",
+        "Rocas de Suesca (7km): $110,000",
+        "Difficulty: Easy to Moderate"
+      ],
+      "price": ""
+    },
+    {
+      "title": "Expeditions",
+      "subtitle": "Conquer the summits",
+      "items": [
+        "Nevado Santa Isabel (4,965m)",
+        "Nevado del Tolima (5,220m)",
+        "Includes Colasistencia insurance"
+      ],
+      "price": "From $1,450,000"
+    }
+  ],
+  "discount": {
+    "title": "⭐ 10% OFF for members of",
+    "linkLabel": "TREPA",
+    "linkHref": "https://www.trepa.co",
+    "body": "We offer mountain plans to: Parque de los Nevados, Peru, Ecuador and Bolivia"
+  }
+}
