@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.2",
     "@cspell/dict-es-es": "^3.0.8",
     "@eslint/js": "^10.0.1",
     "@sveltejs/adapter-static": "^3.0.8",
