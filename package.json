@@ -91,7 +91,7 @@
     "license-checker-rseidelsohn": "^5.0.0",
     "markdownlint-cli2": "^0.22.1",
     "mdsvex": "^0.12.5",
-    "playwright": "^1.49.1",
+    "playwright": "^1.61.0",
     "png-to-ico": "^3.0.1",
     "prettier": "^3.8.4",
     "prettier-plugin-svelte": "^4.1.1",
