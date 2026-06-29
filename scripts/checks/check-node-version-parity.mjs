@@ -74,14 +74,30 @@ if (existsSync(workflowsDir)) {
     if (!entry.isFile() || !/\.ya?ml$/.test(entry.name)) continue;
     const path = join(workflowsDir, entry.name);
     const text = readFileSync(path, "utf8");
-    // Every `node-version:` line; one workflow can have multiple jobs each setting it
     const seen = new Set();
+    // Inline `node-version:` pins; one workflow can have multiple jobs each setting it.
     for (const match of text.matchAll(/node-version:\s*['"]?(\d+)/g)) {
       const v = parseInt(match[1], 10);
       const key = `${path} (node-version: ${v})`;
       if (seen.has(key)) continue;
       seen.add(key);
       findings.push({ source: key, major: v });
+    }
+    // `node-version-file:` references defer to a pin file (e.g. .nvmrc). Resolve
+    // it so the workflow still participates in parity instead of silently
+    // dropping out of the check.
+    for (const match of text.matchAll(/node-version-file:\s*['"]?([^'"\s]+)/g)) {
+      const file = match[1];
+      const key = `${path} (node-version-file: ${file})`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (!existsSync(file)) {
+        missing.push(`${path} references node-version-file '${file}' which doesn't exist`);
+        continue;
+      }
+      const v = pickMajor(readFileSync(file, "utf8"), /(\d+)/);
+      if (v !== null) findings.push({ source: key, major: v });
+      else missing.push(`${path} node-version-file '${file}' has no version number`);
     }
   }
 }
