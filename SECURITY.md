@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-This site is a personal portfolio + content site for Gonzalo Peña-Castellanos. It is
+This site is the marketing + content site for APU Viajes de Montaña (www.viajesapu.com). It is
 a static SvelteKit build deployed to GitHub Pages (no server, no database, no user
 accounts, no forms accepting input). The realistic attack surface is small but
 not zero — supply-chain compromise of the npm tree, the Sveltia CMS bundle, or

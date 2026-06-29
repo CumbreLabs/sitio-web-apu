@@ -84,10 +84,13 @@ The website is available in:
 
 This website is built with:
 
-- HTML5 & CSS3
-- Vanilla JavaScript
-- Mobile-responsive design
-- SEO optimized
+- [SvelteKit 2](https://svelte.dev/docs/kit) + [Svelte 5](https://svelte.dev/) (statically generated)
+- [Tailwind CSS v4](https://tailwindcss.com/) with self-hosted fonts
+- [Sveltia CMS](https://github.com/sveltia/sveltia-cms) for content editing at `/admin/`
+- Deployed to GitHub Pages
+- Bilingual (Spanish / English), mobile-responsive, and SEO optimized
+
+For developer documentation see [CLAUDE.md](./CLAUDE.md) and [DEVELOPMENT.md](./DEVELOPMENT.md).
 
 ## Location
 

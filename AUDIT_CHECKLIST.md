@@ -1,5 +1,7 @@
 # Audit Checklist
 
+> **⚠️ Provenance — read before trusting any status.** This checklist was inherited from the upstream `goanpeca.co` template that this APU site was forked from. The **framework of categories and checks is reusable and applies to APU**, but the `✅ Verified` / `⚠️` / `🚫` statuses, the "Last audited" dates, and many "How to verify" cells reflect the **goanpeca.co** site as it was audited there — including its canonical host (`goanpeca.co`), Twitter handle (`@goanpeca`), GTM analytics, and active portfolio/writing sections. APU differs: canonical host `www.viajesapu.com`, **GA4** analytics, and **no portfolio/writing content** (those sections are dormant — see [CLAUDE.md](./CLAUDE.md)). **Statuses here have NOT been independently re-walked against the APU build.** Treat them as a starting map, not as confirmed-for-APU results, until a row is re-verified and re-dated for this site.
+
 A reusable framework for auditing this site. Every category below is a real angle that has surfaced bugs in this codebase at some point. Use it to systematically rule out issues instead of doing scattershot reviews.
 
 **Legend**

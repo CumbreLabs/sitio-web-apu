@@ -1,0 +1,21 @@
+# Conda environment for the APU Viajes de Montaña website.
+#
+# Provides the exact Node major version this project pins (24 — kept in sync
+# with .nvmrc / package.json#engines / Brewfile / the GitHub workflows via
+# `npm run check:node-pin`) plus exiftool, the one non-npm system dependency
+# the pre-commit hook needs (scripts/pipeline/embed-copyright.mjs).
+#
+# Usage:
+#   conda env create -f environment.yml      # first time
+#   conda activate sitio-web-apu
+#   npm ci                                    # install JS deps
+#   npm run dev
+#
+# Update after editing this file:
+#   conda env update -f environment.yml --prune
+name: sitio-web-apu
+channels:
+  - conda-forge
+dependencies:
+  - nodejs=24
+  - exiftool

@@ -1,6 +1,6 @@
 # React → SvelteKit Migration Comparison
 
-> **Historical document.** The migration is complete; this file is kept as a reference for why each architectural choice was made. For current-state engineering reference, see [CLAUDE.md](./CLAUDE.md). For day-to-day docs, see [README.md](./README.md).
+> **Historical document, inherited from the upstream template.** This file documents the React → SvelteKit migration of the **goanpeca.co** template that this APU site was forked from. **APU's own history is different**: the APU site migrated from a hand-written **vanilla HTML/CSS/JS** site directly to this SvelteKit template (git: `feat: migrate APU site to SvelteKit + Sveltia CMS`) — it was never a React app. Keep this doc for the React-vs-Svelte rationale behind the template's architecture; it does not describe APU's actual migration path. For current-state engineering reference, see [CLAUDE.md](./CLAUDE.md) and [DEVELOPMENT.md](./DEVELOPMENT.md). For day-to-day docs, see [README.md](./README.md).
 
 This document explains every architectural change from the React to SvelteKit migration.
 

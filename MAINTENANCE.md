@@ -1,6 +1,8 @@
 # Maintenance Guide
 
-Operational reference for the scripts under `scripts/`, the pre-commit hook, and the CI gates that keep everything in sync. For architecture, see [CLAUDE.md](./CLAUDE.md); for the project intro, see [README.md](./README.md).
+Operational reference for the scripts under `scripts/`, the pre-commit hook, and the CI gates that keep everything in sync. For architecture, see [CLAUDE.md](./CLAUDE.md) and [DEVELOPMENT.md](./DEVELOPMENT.md); for the project intro, see [README.md](./README.md).
+
+> **Note on dormant sections:** this APU site currently ships only `paginas` + `colecciones` content — no `portafolio` or `escritos`. The portfolio/writing/photography machinery below (copyright embedding, album weight, srcset for albums, writing lighthouse shards) is template code that runs against empty sets here. It stays in place so those sections can be activated later per [FORKING.md](./FORKING.md); the operations that reference them are kept for that future, not because the content exists today.
 
 ## TL;DR
 
@@ -57,7 +59,7 @@ Reads every `src/data/portafolio/{en,es}/*.json`, collects each album's `coverSr
 - **Embeds** the owner's copyright (EXIF `Copyright`, `Artist`, `Creator` + XMP `dc:Rights`, `dc:Creator`, `xmpRights:WebStatement`, `xmpRights:Marked`) on exactly the files in that Set.
 - **Strips** the same fields from every other image under `static/media/` and `static/favicon/`, so nothing is misattributed.
 
-Why JSON-driven instead of filename patterns: when Gonzalo renames or adds an album, the JSON is the only thing he touches — the script picks up the change with no separate config.
+Why JSON-driven instead of filename patterns: when the maintainer renames or adds an album, the JSON is the only thing he touches — the script picks up the change with no separate config.
 
 Why no IPTC tags: WebP doesn't store IPTC. Writing them silently no-ops; the re-read returns empty; the script thinks it needs to re-write; idempotency breaks. XMP-dc carries the same semantic info in a format WebP actually supports.
 
@@ -69,7 +71,7 @@ Requires `exiftool` on `$PATH`. macOS: `brew bundle`. Linux: `sudo apt-get insta
 
 ### `scripts/pipeline/generate-lighthouse-config.mjs`
 
-Walks the current `src/data/paginas/{en,es}/`, `portafolio/{en,es}/`, and `escritos/{en,es}/` data and writes up to **six** lighthouse configs into `lighthouse/` (a shard is skipped when its URL list is empty — so on the goanpeca site today there are 4 files because the portfolio is inactive):
+Walks the current `src/data/paginas/{en,es}/`, `portafolio/{en,es}/`, and `escritos/{en,es}/` data and writes up to **six** lighthouse configs into `lighthouse/` (a shard is skipped when its URL list is empty — so on the APU site today only the `core-{en,es}` shards are emitted, since the portfolio and writing sections have no content):
 
 | Config            | URLs                            | Purpose                                         |
 | ----------------- | ------------------------------- | ----------------------------------------------- |
@@ -274,7 +276,7 @@ The `check:bundle` step runs after `build` and fails the PR if any bucket in `di
 3. Click **Work with Local Repository** on the login screen. Browser prompts for permission to access the project folder; pick the repo root.
 4. Edits write directly to the working tree — no commits, no push. Save in the CMS = files change on disk.
 5. The CMS detects it's on `localhost` and rewrites `site_url` / `display_url` to `http://localhost:<port>` for the editing session (see `static/admin/index.html`), so the per-entry "View on site" link opens the LOCAL page, not production. This is why `preview_path: "{{locale}}/{{fields.settings.slug}}/"` on the `paginas` collection is so useful — one click jumps from an edit to its rendered local preview.
-6. When happy, `git add` + commit + push as normal. (We never auto-commit on Gonzalo's behalf — see the top of [CLAUDE.md](./CLAUDE.md).)
+6. When happy, `git add` + commit + push as normal. (We never auto-commit on the maintainer's behalf — see the top of [CLAUDE.md](./CLAUDE.md).)
 
 > **Why no `local_backend: true`?** That's a Decap CMS option for proxying writes through a local server. Sveltia uses the browser's File System Access API directly — no proxy needed, no extra dependency. The flag was removed; Sveltia warned about it being ignored.
 
@@ -305,7 +307,7 @@ concurrency:
   cancel-in-progress: false
 ```
 
-Sveltia CMS writes through git: every edit Gonzalo makes in `/admin/` produces a commit on `main`. Editors often land 2-3 commits in rapid succession (publish a post, immediately fix a typo). If a deploy is mid-`upload-pages-artifact` when commit B lands, canceling commit A's deploy can leave the GitHub Pages environment in a half-uploaded state and then commit B's deploy races against the partial artifact. Queuing serializes: commit A finishes, commit B starts. Every commit eventually ships; final state is always the latest commit.
+Sveltia CMS writes through git: every edit the maintainer makes in `/admin/` produces a commit on `main`. Editors often land 2-3 commits in rapid succession (publish a post, immediately fix a typo). If a deploy is mid-`upload-pages-artifact` when commit B lands, canceling commit A's deploy can leave the GitHub Pages environment in a half-uploaded state and then commit B's deploy races against the partial artifact. Queuing serializes: commit A finishes, commit B starts. Every commit eventually ships; final state is always the latest commit.
 
 Trade-off: if 5 commits land in a minute, the queue holds them and they deploy sequentially. For this site's commit cadence (a few pushes a week) the queue is essentially always empty.
 
