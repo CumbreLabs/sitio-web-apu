@@ -55,7 +55,12 @@
     "prepare": "husky"
   },
   "overrides": {
-    "cookie": ">=0.7.0"
+    "cookie": ">=0.7.0",
+    "markdown-it": "^14.2.0",
+    "js-yaml": "^4.2.0",
+    "gray-matter": {
+      "js-yaml": "3.14.2"
+    }
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
