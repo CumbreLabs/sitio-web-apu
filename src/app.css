@@ -109,6 +109,31 @@ body {
   outline-color: var(--color-accent-dark);
 }
 
+/* Text selection uses the brand accent. Light mode: dark-teal accent behind
+   white text (same pairing as the skip-link). Dark mode: the lightened accent
+   behind the dark page bg so the highlighted text stays legible. Kept as two
+   separate rules (not a `::selection, ::-moz-selection` list) so an engine that
+   doesn't recognize one pseudo-element can't drop the whole rule. */
+::selection {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+[data-theme="dark"] ::selection {
+  background-color: var(--color-accent-dark);
+  color: var(--color-bg-dark);
+}
+
+[data-theme="dark"] ::-moz-selection {
+  background-color: var(--color-accent-dark);
+  color: var(--color-bg-dark);
+}
+
 /* Skip-to-main link — visually hidden until focused via Tab. Lets keyboard
    users jump past the navbar instead of tabbing through every nav item. */
 .skip-link {
