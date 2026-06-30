@@ -102,6 +102,6 @@ We operate primarily in:
 
 ---
 
-© 2025 APU Mountain Travel | All rights reserved
+© 2026 APU Mountain Travel | All rights reserved
 
 _"The mountains are calling and I must go"_ - John Muir
