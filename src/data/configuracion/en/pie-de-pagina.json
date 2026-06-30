@@ -1,7 +1,7 @@
 {
   "privacyPageId": "privacidad",
   "copyright": "&copy; {{currentYear}}, APU Viajes de Montaña",
-  "madeWith": "Made with 💜 by [Cumbre Labs](https://cumbrelabs.co/)",
+  "madeWith": "Made with {heart} by [Cumbre Labs](https://www.cumbrelabs.co)",
   "social": [
     { "active": true, "key": "instagram", "url": "https://www.instagram.com/apuviajesdemontana/" },
     { "active": true, "key": "whatsapp", "url": "https://wa.me/573160557537" },
