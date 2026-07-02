@@ -33,21 +33,11 @@ on:
 permissions:
   contents: read
 
-# Never cancel a deploy mid-flight, even if a newer commit lands on `main`.
-# Sveltia CMS uses git commits as its backend, so editors can land 2-3 commits
-# in rapid succession (e.g. update a writing post + fix a typo immediately
-# after). `cancel-in-progress: true` would mean the first commit's deploy gets
-# killed and only the latest content reaches production — but a canceled
-# upload-pages-artifact / deploy-pages can also leave the GitHub Pages
-# environment in an inconsistent state (half-uploaded artifact, then re-deploy
-# races against it). Setting `false` queues the second deploy to wait for the
-# first to finish cleanly, then runs it. Every commit eventually deploys, in
-# order, and the final state is always the latest. Trade-off: deploy is
-# serialized rather than coalesced, but for a personal site that pushes a few
-# times a week the queue is essentially always empty.
+# Cancel stale deploys when a newer commit lands. GitHub Pages deploys can sit
+# in deployment_queued; coalescing to the latest commit keeps the queue short.
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 # Opt all bundled JavaScript actions into Node 24 (Node 20 is deprecated).
 env:
