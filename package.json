@@ -82,7 +82,7 @@
     "@sveltejs/kit": "^2.61.1",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@tailwindcss/vite": "^4.3.0",
-    "@types/node": "^24",
+    "@types/node": "^26",
     "@types/sanitize-html": "^2.16.1",
     "@vitest/coverage-v8": "^4.1.7",
     "axe-core": "^4.10.2",
