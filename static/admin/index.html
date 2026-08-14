@@ -25,6 +25,18 @@
          because the hostname check fails. -->
     <script>
       window.CMS_MANUAL_INIT = true;
+      // Default the admin UI to Colombian Spanish (es-CO) unless the editor
+      // has already picked a language in Settings. Sveltia CMS has no config
+      // option for the UI locale; it reads the initial locale from this
+      // localStorage prefs object (else the browser language, then en-US).
+      try {
+        var _k = "sveltia-cms.prefs";
+        var _p = JSON.parse(localStorage.getItem(_k) || "{}") || {};
+        if (!_p.locale) {
+          _p.locale = "es-CO";
+          localStorage.setItem(_k, JSON.stringify(_p));
+        }
+      } catch (e) {}
     </script>
     <script src="./sveltia-cms.js"></script>
     <script>
